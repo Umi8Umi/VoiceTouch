@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.voxhub.accessibility.app" 
+    package="io.voxhub.accessibility.voicetouch" 
     xmlns:tools="http://schemas.android.com/tools" > 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="io.voxhub.accessibility.app.SimpleActivity"
+            android:name="io.voxhub.accessibility.voicetouch.SimpleActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -21,19 +21,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="io.voxhub.accessibility.app.SettingsActivity"
+            android:name="io.voxhub.accessibility.voicetouch.SettingsActivity"
             android:label="@string/action_settings"
-            android:parentActivityName="io.voxhub.accessibility.app.SimpleActivity">
+            android:parentActivityName="io.voxhub.accessibility.voicetouch.SimpleActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="io.voxhub.accessibility.app.SimpleActivity"/>
+                android:value="io.voxhub.accessibility.voicetouch.SimpleActivity"/>
         </activity>
         <activity
-            android:name="io.voxhub.accessibility.app.AboutActivity"
+            android:name="io.voxhub.accessibility.voicetouch.AboutActivity"
             android:label="@string/txt_btn_about" >
         </activity>
         <activity
-            android:name="io.voxhub.accessibility.app.HelpActivity"
+            android:name="io.voxhub.accessibility.voicetouch.HelpActivity"
             android:label="@string/txt_btn_help" >
         </activity>
     </application>

@@ -1,4 +1,4 @@
-package io.voxhub.accessibility.app;
+package io.voxhub.accessibility.voicetouch;
 
 import android.app.Activity;
 import android.content.SharedPreferences;

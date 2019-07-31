@@ -1,4 +1,4 @@
-package io.voxhub.accessibility.app;
+package io.voxhub.accessibility.voicetouch;
 import jp.naist.ahclab.speechkit.logs.MyLog;
 
 import android.app.Activity;
