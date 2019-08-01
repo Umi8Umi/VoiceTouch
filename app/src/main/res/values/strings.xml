@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Voice Next Page</string>
+    <string name="app_name">Voice Touch</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="txt_btn_start">Start</string>
@@ -19,7 +19,7 @@
     <string name="txt_btn_overlay">Enable Overlay Permissions</string>
     <string name="hover_text">hovertext</string>
     <string name="help_title">HELP</string>
-    <string name="commands">Supported Commands</string>
+    <string name="faq">FAQ</string>
     <string name="txt_btn_help">Help</string>
    
 

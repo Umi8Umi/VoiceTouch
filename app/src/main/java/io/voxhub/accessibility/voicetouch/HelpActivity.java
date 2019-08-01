@@ -19,9 +19,8 @@ public class HelpActivity extends Activity {
 
     private Button btn_back;
     private TextView title;
-    private TextView commands;
-    private TextView bodyT;
-    private TextView bodyC;
+    private TextView faq;
+    private TextView body;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,18 +29,11 @@ public class HelpActivity extends Activity {
         Intent intent = getIntent();
         btn_back = (Button) findViewById(R.id.btn_back);
         title = (TextView) findViewById(R.id.help_title);
-        commands = (TextView) findViewById(R.id.contributors);
-        bodyT = (TextView) findViewById(R.id.help_body);
-        bodyC = (TextView) findViewById(R.id.commands_body);
+        faq = (TextView) findViewById(R.id.faq);
+        body = (TextView) findViewById(R.id.faq_body);
         
-      //  bodyT.setText("\n");
-        bodyC.setText(Html.fromHtml(
-              "<b>\"Next Page\"</b> - generates a tap on the right side of the screen<br><br>"
-            + "<b>\"Previous Page\"</b> - generates a tap on the left side of the screen<br><br>"
-            + "<b>\"Center\"</b> - generates a tap on the center of the screen<br><br>"
-            + "<b>\"Foreground\"</b> - brings the app into the main focus<br><br>"
-            + "<b>\"Background\"</b> - brings the app out of the main focus<br><br>"
-            + "<b>\"Stop Listening\"</b> - stops the recording<br><br>"), 
+        body.setText(Html.fromHtml(
+            "<b>\"What commands can I use?\"</b><br>Navigate to the app settings --> commands to see a full list of supported commands.<br><br>"), 
             TextView.BufferType.SPANNABLE);
         
         btn_back.setOnClickListener(new View.OnClickListener() {

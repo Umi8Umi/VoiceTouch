@@ -1,212 +1,176 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".SimpleActivity">
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
 
-    <ImageView
-        android:id="@+id/icon"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/app_icon"/>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".SimpleActivity">
 
-    <Button
-        android:id="@+id/btn_enable"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:enabled="true"
-        android:text="@string/txt_btn_enable"
-        android:background="@drawable/button_states"
-        android:layout_below="@+id/icon"
-        android:layout_centerHorizontal="true"/>
+        <Button
+            android:id="@+id/btn_about"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="true"
+            android:text="@string/txt_btn_about"
+            android:background="@drawable/button_states"
+            android:layout_alignParentLeft="true"/>
 
-    <Button
-        android:id="@+id/btn_overlay"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:enabled="true"
-        android:text="@string/txt_btn_overlay"
-        android:background="@drawable/button_states"
-        android:layout_below="@+id/btn_enable"/>
+       <ImageButton
+            android:id="@+id/btn_help"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:enabled="true"
+            android:src="@drawable/help"
+            android:background="@android:color/transparent"
+            android:layout_marginRight="15dp"
+            android:layout_toLeftOf="@+id/btn_setting"/>
 
-    <TextView
-        android:id="@+id/connection"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:layout_marginRight="15dp"
-        android:text="Connection: "
-        android:textStyle="bold"
-        android:layout_below="@+id/btn_overlay"/>
+        <ImageButton
+            android:id="@+id/btn_setting"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:enabled="true"
+            android:src="@drawable/settings_icon"
+            android:tint="@drawable/touch_selector"
+            android:background="@android:color/transparent"
+            android:layout_alignParentRight="true"/>
 
-    <ImageView
-        android:id="@+id/connected"
-        android:scaleType="fitCenter"
-        android:visibility="invisible"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_toRightOf="@+id/connection"
-        android:layout_below="@+id/btn_overlay"
-        android:src="@drawable/connected"/>
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/btn_help"
+            android:src="@drawable/app_icon"/>
 
-    <TextView
-        android:id="@+id/noWorkersText"
-        android:layout_width="wrap_content"
-        android:layout_height="18dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="15dp"
-        android:text="(no workers available)"
-        android:layout_below="@+id/btn_overlay"
-        android:layout_toRightOf="@+id/noworkers"/>
+        <Button
+            android:id="@+id/btn_enable"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:enabled="true"
+            android:text="@string/txt_btn_enable"
+            android:background="@drawable/button_states"
+            android:layout_below="@+id/icon"
+            android:layout_centerHorizontal="true"/>
 
-    <ImageView
-        android:id="@+id/disconnected"
-        android:scaleType="fitCenter"
-        android:visibility="invisible"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_toRightOf="@+id/connection"
-        android:layout_below="@+id/btn_overlay"
-        android:src="@drawable/disconnected"/>
+        <Button
+            android:id="@+id/btn_overlay"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:enabled="true"
+            android:text="@string/txt_btn_overlay"
+            android:background="@drawable/button_states"
+            android:layout_below="@+id/btn_enable"/>
 
-    <ImageView
-        android:id="@+id/noworkers"
-        android:scaleType="fitCenter"
-        android:visibility="invisible"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_toRightOf="@+id/connection"
-        android:layout_below="@+id/btn_overlay"
-        android:src="@drawable/noworkers"/>
+        <TextView
+            android:id="@+id/connection"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginRight="15dp"
+            android:text="Connection: "
+            android:textStyle="bold"
+            android:layout_below="@+id/btn_overlay"/>
 
-    <Button
-        android:id="@+id/btn_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:enabled="false"
-        android:text="@string/txt_btn_start"
-        android:background="@drawable/button_states"
-        android:layout_below="@+id/connection"/>
-   
-   <!-- <Button
-        android:id="@+id/btn_stop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:enabled="true"
-        android:text="@string/txt_btn_stop"
-        android:background="@drawable/button_states"
-        android:layout_toRightOf="@+id/progress_listening"
-        android:layout_below="@+id/connection"/>
-        -->
+        <ImageView
+            android:id="@+id/connected"
+            android:scaleType="fitCenter"
+            android:visibility="invisible"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_toRightOf="@+id/connection"
+            android:layout_below="@+id/btn_overlay"
+            android:src="@drawable/connected"/>
 
-    <Button
-        android:id="@+id/btn_stop"
-        android:visibility="invisible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:enabled="true"
-        android:text="@string/txt_btn_stop"
-        android:background="@drawable/button_states"
-        android:layout_below="@+id/connection"/>
+        <TextView
+            android:id="@+id/noWorkersText"
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="15dp"
+            android:text="(no workers available)"
+            android:layout_below="@+id/btn_overlay"
+            android:layout_toRightOf="@+id/noworkers"/>
 
-    <EditText
-        android:id="@+id/ed_result"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:text="[transcripts]"
-        android:layout_below="@+id/btn_stop"/>
+        <ImageView
+            android:id="@+id/disconnected"
+            android:scaleType="fitCenter"
+            android:visibility="invisible"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_toRightOf="@+id/connection"
+            android:layout_below="@+id/btn_overlay"
+            android:src="@drawable/disconnected"/>
 
-  <!--  <ProgressBar
-        android:id="@+id/progressbar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:max="4000"
-        android:progressDrawable="@drawable/progressbar"
-        android:layout_toRightOf="@+id/btn_start"
-        android:layout_below="@+id/connection"></ProgressBar>
-        -->
+        <ImageView
+            android:id="@+id/noworkers"
+            android:scaleType="fitCenter"
+            android:visibility="invisible"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_toRightOf="@+id/connection"
+            android:layout_below="@+id/btn_overlay"
+            android:src="@drawable/noworkers"/>
 
-    <ImageButton
-        android:id="@+id/mic"
-        android:scaleType="fitCenter"
-        android:background="@android:color/transparent"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_toRightOf="@+id/btn_start"
-        android:layout_below="@+id/connection"
-        android:src="@drawable/mic"/>
+        <Button
+            android:id="@+id/btn_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/txt_btn_start"
+            android:background="@drawable/button_states"
+            android:layout_below="@+id/connection"/>
 
-    <ProgressBar
-        android:id="@+id/progress_listening"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:indeterminate="false"
-        android:visibility="invisible"
-        android:layout_toRightOf="@+id/btn_start"
-        android:layout_below="@+id/connection"></ProgressBar>
+        <Button
+            android:id="@+id/btn_stop"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="true"
+            android:text="@string/txt_btn_stop"
+            android:background="@drawable/button_states"
+            android:layout_below="@+id/connection"/>
 
-    <Button
-        android:id="@+id/btn_about"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:enabled="true"
-        android:text="@string/txt_btn_about"
-        android:background="@drawable/button_states"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"/>
+        <EditText
+            android:id="@+id/ed_result"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text="[transcripts]"
+            android:editable="false"
+            android:focusable="false"
+            android:clickable="false"
+            android:layout_below="@+id/btn_stop"/>
 
-  <!-- <Button
-        android:id="@+id/btn_help"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="75dp"
-        android:layout_marginRight="75dp"
-        android:enabled="true"
-        android:text="@string/txt_btn_help"
-        android:background="@drawable/button_states"
-        android:layout_toRightOf="@+id/btn_about"
-        android:layout_toLeftOf="@+id/btn_setting"
-        android:layout_alignParentBottom="true"/>
-   -->
+        <ImageButton
+            android:id="@+id/mic"
+            android:visibility="invisible"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_toRightOf="@+id/btn_start"
+            android:layout_below="@+id/connection"
+            android:src="@drawable/mic"/>
 
-   <ImageButton
-        android:id="@+id/btn_help"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:scaleType="fitCenter"
-        android:enabled="true"
-        android:src="@drawable/help"
-        android:background="@android:color/transparent"
-        android:layout_marginRight="15dp"
-        android:layout_toLeftOf="@+id/btn_setting"
-        android:layout_alignParentBottom="true"/>
-
-    <ImageButton
-        android:id="@+id/btn_setting"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:scaleType="fitCenter"
-        android:enabled="true"
-        android:src="@drawable/settings_icon"
-        android:tint="@drawable/touch_selector"
-        android:background="@android:color/transparent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
-
-<!--    <Button
-        android:id="@+id/btn_setting"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:enabled="true"
-        android:text="@string/txt_btn_setting"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
-        -->
-</RelativeLayout>
+        <ProgressBar
+            android:id="@+id/progress_listening"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:indeterminate="false"
+            android:visibility="invisible"
+            android:layout_toRightOf="@+id/btn_start"
+            android:layout_below="@+id/connection"></ProgressBar>
+    </RelativeLayout>
+</ScrollView>

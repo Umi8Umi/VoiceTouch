@@ -33,10 +33,13 @@ public class MyAccessibilityService extends AccessibilityService {
     }
 
     private enum GestureType {
+        GESTURE_SWIPE_LEFT,
+        GESTURE_SWIPE_RIGHT,
+        GESTURE_SWIPE_UP,
+        GESTURE_SWIPE_DOWN,
         GESTURE_TAP_LEFT_SIDE,
         GESTURE_TAP_RIGHT_SIDE,
         GESTURE_TAP_CENTER,
-        GESTURE_TAP_RIGHT_THREE,
     }
 
     private void doGesture(GestureType type) {
@@ -52,6 +55,7 @@ public class MyAccessibilityService extends AccessibilityService {
         final int midY = displayMetrics.heightPixels / 2;
         final int botY = displayMetrics.heightPixels - 1 - BORDER;
         final int GESTURE_DURATION = 100;
+        final int GESTURE_DURATION_slow = 500;
 
         GestureDescription.Builder gestureBuilder = new GestureDescription.Builder();
         Path path = new Path();
@@ -74,15 +78,34 @@ public class MyAccessibilityService extends AccessibilityService {
                 path, 0, GESTURE_DURATION));
             Log.i("accessibilityservice", "gesture: tap center");
             break; 
-   /*     case GESTURE_TAP_RIGHT_THREE: //fix implementation
+        case GESTURE_SWIPE_LEFT: 
             path.moveTo(rightX, midY);
-            GestureDescription.StrokeDescription stroke = new GestureDescription.StrokeDescription(
-                path, 0, GESTURE_DURATION);
-            stroke.continueStroke(path, 0, GESTURE_DURATION, true); // continue stroke DNE?
-            stroke.continueStroke(path, 0, GESTURE_DURATION, false);
-            gestureBuilder.addStroke(stroke); // last boolean is willContinue
+            path.lineTo(leftX, midY);
+            gestureBuilder.addStroke(new GestureDescription.StrokeDescription(
+                path, 0, GESTURE_DURATION_slow));
+            Log.i("accessibilityservice", "gesture: tap left side");
             break;
-            Log.i("accessibilityservice", "gesture: tap right three"); */
+        case GESTURE_SWIPE_RIGHT: 
+            path.moveTo(leftX, midY);
+            path.lineTo(rightX, midY);
+            gestureBuilder.addStroke(new GestureDescription.StrokeDescription(
+                path, 0, GESTURE_DURATION_slow));
+            Log.i("accessibilityservice", "gesture: tap left side");
+            break;
+        case GESTURE_SWIPE_UP: 
+            path.moveTo(midX, botY);
+            path.lineTo(midX, topY);
+            gestureBuilder.addStroke(new GestureDescription.StrokeDescription(
+                path, 0, GESTURE_DURATION_slow));
+            Log.i("accessibilityservice", "gesture: tap left side");
+            break;
+        case GESTURE_SWIPE_DOWN: 
+            path.moveTo(leftX, topY);
+            path.lineTo(rightX, botY);
+            gestureBuilder.addStroke(new GestureDescription.StrokeDescription(
+                path, 0, GESTURE_DURATION_slow));
+            Log.i("accessibilityservice", "gesture: tap left side");
+            break;
         default:
             Log.i("accessibilityservice", "gesture: unsupported gesture");
             return;
@@ -107,16 +130,25 @@ public class MyAccessibilityService extends AccessibilityService {
             Log.i("accessibilityservice", "announce event text is [" + text + "]");
 
             if(text.equals("next")) {
-                doGesture(GestureType.GESTURE_TAP_RIGHT_SIDE);
+                doGesture(GestureType.GESTURE_TAP_LEFT_SIDE);
             }
             else if(text.equals("previous")) {
-                doGesture(GestureType.GESTURE_TAP_LEFT_SIDE);
+                doGesture(GestureType.GESTURE_TAP_RIGHT_SIDE);
+            }
+            else if(text.equals("left")) {
+                doGesture(GestureType.GESTURE_SWIPE_LEFT);
+            }
+            else if(text.equals("right")) {
+                doGesture(GestureType.GESTURE_SWIPE_RIGHT);
+            }
+            else if(text.equals("up")) {
+                doGesture(GestureType.GESTURE_SWIPE_UP);
+            }
+            else if(text.equals("down")) {
+                doGesture(GestureType.GESTURE_SWIPE_DOWN);
             }
             else if(text.equals("center")) {
                 doGesture(GestureType.GESTURE_TAP_CENTER);
-            }
-            else if(text.equals("next three")) {
-                doGesture(GestureType.GESTURE_TAP_RIGHT_THREE);
             }
         }
     }

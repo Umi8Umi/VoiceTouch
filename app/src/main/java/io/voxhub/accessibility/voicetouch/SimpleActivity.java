@@ -546,6 +546,11 @@ public class SimpleActivity extends Activity {
         else
             outState.putString("stopBtnState", "invisible");
     }
+        
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 
     //--- inner class ~ SpeechkitCode ---//
     class SpeechkitCode implements Recognizer.Listener {
@@ -595,11 +600,16 @@ public class SimpleActivity extends Activity {
                 bringApplicationToForeground();
                 MyLog.i("SimpleActivity sent foreground");
             }
-            if (canonical.equals("background")) {
+            if (canonical.equals("background")) { //change command to home ????????????????
                 MyLog.i("SimpleActivity spotted background");
                 bringApplicationToBackground();
                 MyLog.i("SimpleActivity sent background");
             }
+            /*if (canonical.equals("back")) {
+                MyLog.i("SimpleActivity spotted background");
+                onBackPressed();
+                MyLog.i("SimpleActivity sent background");
+            }*/
 
             if(!manager.isEnabled()) { // This will never be called bc start button
                 ed_result.setText(result + "...[service not running]");

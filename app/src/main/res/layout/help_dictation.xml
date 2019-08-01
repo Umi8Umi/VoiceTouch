@@ -14,27 +14,20 @@
         android:textSize="50sp"/>
     
     <TextView
-        android:id="@+id/help_body"
+        android:id="@+id/faq"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:textSize="20sp"
-        android:layout_below="@+id/help_title"/>
-
-    <TextView
-        android:id="@+id/commands"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/commands"
+        android:text="@string/faq"
         android:textStyle="bold"
         android:textSize="30sp"
-        android:layout_below="@+id/help_body"/>
+        android:layout_below="@+id/help_title"/>
         
     <TextView
-        android:id="@+id/commands_body"
+        android:id="@+id/faq_body"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:textSize="20sp"
-        android:layout_below="@+id/commands"/>
+        android:layout_below="@+id/faq"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -43,6 +36,6 @@
         android:enabled="true"
         android:text="@string/txt_btn_back"
         android:background="@drawable/button_states"
-        android:layout_below="@+id/commands_body"/>
+        android:layout_below="@+id/faq_body"/>
       
 </RelativeLayout>

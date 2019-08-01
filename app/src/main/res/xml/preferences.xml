@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        app:title="Connection"
-        app:key="server_port">
+    <PreferenceScreen
+        app:title="Connection">
 
         <EditTextPreference
             app:key="server"
@@ -20,11 +19,10 @@
             app:dialogTitle="Port"
             app:defaultValue="@string/default_server_port"
             app:inputType="textCapWords"/>
-    </PreferenceCategory>
+    </PreferenceScreen>
 
-    <PreferenceCategory
-        app:title="Features"
-        app:key="on_off_features">
+    <PreferenceScreen
+        app:title="Features">
 
         <SwitchPreference
             app:key="@string/hover_text"
@@ -43,6 +41,53 @@
             app:defaultValue="10"
             app:digits="0123456789"
             app:inputType="textCapWords"/>
-    </PreferenceCategory>
+    </PreferenceScreen>
+
+    <PreferenceScreen
+        app:title="Commands">
+
+        <Preference
+            app:key="swipeLeft"
+            app:title="Swipe Left"
+            app:summary="a swipe is initiated from the right to left side of the screen">
+        </Preference>
+
+        <Preference
+            app:key="swipeRight"
+            app:title="Swipe Right"
+            app:summary="a swipe is initiated from the left to right side of the screen">
+        </Preference>
+
+        <Preference
+            app:key="swipeUp"
+            app:title="Swipe Up"
+            app:summary="a swipe is initiated from the bottom to top of the screen">
+        </Preference>
+
+        <Preference
+            app:key="swipeDown"
+            app:title="Swipe Down"
+            app:summary="a swipe is initiated from the top to bottom of the screen">
+        </Preference>
+
+        <Preference
+            app:key="home"
+            app:title="Home"
+            app:summary="simulates a click to the home button">
+        </Preference>
+
+        <Preference
+            app:key="back"
+            app:title="Back"
+            app:summary="simulates a click to the back button">
+        </Preference>
+
+        <Preference
+            app:key="menu"
+            app:title="Menu"
+            app:summary="simulates a click to the menu button">
+        </Preference>
+
+    </PreferenceScreen>
 
 </PreferenceScreen>

@@ -44,7 +44,6 @@ public class SettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         
-        //Overlay overlay = null;
         final SwitchPreference hovertext = (SwitchPreference) findPreference(this.getResources()
                                            .getString(R.string.hover_text)); 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -93,18 +92,6 @@ public class SettingsActivity extends PreferenceActivity {
                 return true;
             }
         });
-
-        //if(overlay.getOverlayExists())
-        //    overlay = Overlay.getInstance();
-        //
-        //if (hovertext.isChecked()) {
-        //    if(overlay.getOverlayExists())
-        //        overlay.show();
-        //} 
-        //else {
-        //    if(overlay.getOverlayExists())
-        //        overlay.hide();
-        //}
 
     }
 }
