@@ -4,7 +4,9 @@ import jp.naist.ahclab.speechkit.logs.MyLog;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.accessibility.AccessibilityManager;
 import android.view.animation.Animation;
@@ -39,16 +41,18 @@ import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
+import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.graphics.Color;
 import android.Manifest;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.Settings;
 import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat; 
 import android.support.v4.content.ContextCompat;
@@ -64,6 +68,7 @@ public class SimpleActivity extends Activity {
 
     final String TAG = "SimpleActivity";
 
+    private Executer executer;
     private AccessibilityManager manager;
 
     private Button btn_start;
@@ -71,6 +76,11 @@ public class SimpleActivity extends Activity {
     private ImageButton btn_setting;
     private enum ConnectionIcon { DISCONNECTED, CONNECTED, NOWORKERS };
     private Map<ConnectionIcon, ImageView> connectionIcon = new HashMap<ConnectionIcon, ImageView>();
+
+    //installed-app-list
+    //private Context mContext;
+    //private Activity mActivity;
+
     private ImageButton mic;
     private TextView connection;
     private TextView noWorkersText;
@@ -234,7 +244,7 @@ public class SimpleActivity extends Activity {
         }
     }
 
-    private void stopListening() {
+    public void stopListening() {
         requestListen = false;
         MyLog.i("Setting requestListen to " + requestListen);
         _currentRecognizer.stopRecording();
@@ -278,35 +288,39 @@ public class SimpleActivity extends Activity {
             ? View.VISIBLE : View.INVISIBLE);
     }
 
-    private void bringApplicationToBackground() {
-        Intent i = new Intent(Intent.ACTION_MAIN);
-        i.addCategory(Intent.CATEGORY_HOME);
-        startActivity(i);
-    }
-    private void bringApplicationToForeground() {
-        ActivityManager am =
-            (ActivityManager) getSystemService(SimpleActivity.this.ACTIVITY_SERVICE);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            List<ActivityManager.AppTask> tasksList = am.getAppTasks();
-            for (ActivityManager.AppTask task : tasksList){
-              task.moveToFront();
-            }
+    /*protected HashMap<String,String> getInstalledPackages(){
+        PackageManager packageManager = getPackageManager();
+
+        // Initialize a new intent
+        Intent intent = new Intent(Intent.ACTION_MAIN,null);
+        // Set the intent category
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        // Set the intent flags
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                |Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+
+        // Initialize a new list of resolve info
+        List<ResolveInfo> resolveInfoList = getPackageManager().queryIntentActivities(intent,0);
+
+        // Initialize a new hash map of package names and application label
+        HashMap<String,String> map = new HashMap<String,String>();
+
+        // Loop through the resolve info list
+        for(ResolveInfo resolveInfo : resolveInfoList){
+            // Get the activity info from resolve info
+            ActivityInfo activityInfo = resolveInfo.activityInfo;
+
+            // Get the package name
+            String packageName = activityInfo.applicationInfo.packageName;
+
+            // Get the application label
+            String label = (String) packageManager.getApplicationLabel(activityInfo.applicationInfo);
+
+            // Put the package name and application label to hash map
+            map.put(packageName,label);
         }
-        else{
-            List<ActivityManager.RunningTaskInfo> tasksList =
-                am.getRunningTasks(Integer.MAX_VALUE);
-            if(!tasksList.isEmpty()){
-                int nSize = tasksList.size();
-                for(int i = 0; i < nSize;  i++){
-                    if(tasksList.get(i).topActivity.getPackageName()
-                        .equals(getPackageName())){
-                        
-                        am.moveTaskToFront(tasksList.get(i).id, 0);
-                    }
-                }
-            }
-        }
-    }
+        return map;
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -315,9 +329,17 @@ public class SimpleActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dictation);
 
+        executer = new Executer(this);
+
+        //installed-app-list
+        //mContext = getApplicationContext();
+        //mActivity = SimpleActivity.this;
+        //HashMap<String,String> map = getInstalledPackages();
+        //final String[] values = map.values().toArray(new String[map.size()]);
+        //final String[] keys = map.keySet().toArray(new String[map.size()]);
+
         btn_start = (Button)findViewById(R.id.btn_start);
         btn_setting = (ImageButton)findViewById(R.id.btn_setting);
-   //     btn_setting = (Button)findViewById(R.id.btn_setting);
         connection = (TextView)findViewById(R.id.connection);
         noWorkersText = (TextView)findViewById(R.id.noWorkersText);
         connectionIcon.put(ConnectionIcon.CONNECTED, (ImageView)findViewById(R.id.connected));
@@ -328,17 +350,9 @@ public class SimpleActivity extends Activity {
         btn_enable = (Button) this.findViewById(R.id.btn_enable);
         btn_overlay = (Button) this.findViewById(R.id.btn_overlay); 
         btn_about = (Button) this.findViewById(R.id.btn_about);
-   //      btn_help = (Button) this.findViewById(R.id.btn_help);
         btn_help = (ImageButton) this.findViewById(R.id.btn_help);
         progress = (ProgressBar)findViewById(R.id.progress_listening);
-   //     pb = (ProgressBar)findViewById(R.id.progressbar);
         ed_result = (EditText)findViewById(R.id.ed_result);
-        /*serverInfo.setAddr(this.getResources().getString(R.string.default_server_addr));
-        serverInfo.setPort(Integer.parseInt(this.getResources().getString(R.string.default_server_port)));
-        serverInfo.setAppSpeech(this.getResources().getString(R.string.default_server_app_speech));
-        serverInfo.setAppStatus(this.getResources().getString(R.string.default_server_app_status));*/
-
-        //init_speechkit(serverInfo);
         
         if(_currentRecognizer == null || makeServerInfo()) {
             make_speechkit();
@@ -350,16 +364,6 @@ public class SimpleActivity extends Activity {
                 startListening(false);
             }
         }
-        
-        /*if (savedInstanceState != null 
-                && savedInstanceState.getString("stopBtnState") == "invisible") {
-            make_speechkit();
-            MyLog.i("savedInstanceState is not null and stopBtnState is invisible");
-        }
-        else if (btn_stop.getVisibility() == View.INVISIBLE)
-            make_speechkit();
-            MyLog.i("savedInstanceState is null and btn_stop visibility is INVISIBLE");
-        */
 
         if (VersionUpgraded())
             new AlertDialog.Builder(SimpleActivity.this)
@@ -375,6 +379,16 @@ public class SimpleActivity extends Activity {
                 })
                 .setNegativeButton("Dismiss", null)
                 .show();
+
+        //installed-app-list
+        /*final PreferenceCategory cat = new PreferenceCategory(getApplicationContext());
+        cat.setTitle(R.string.installedApps);
+        for (final String appName :map.keySet()) {
+            final Preference app = new Preference(getApplicationContext());
+            app.setTitle(appName);
+            app.setSummary(map.get(appName));
+            cat.addPreference(app);
+        }*/
 
         btn_setting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -482,39 +496,6 @@ public class SimpleActivity extends Activity {
         }
     }
 
-    public void sendAccessibilityEvent(String string) {
-        AccessibilityEvent event = AccessibilityEvent.obtain(AccessibilityEvent
-            .TYPE_ANNOUNCEMENT);
-        event.setClassName(getClass().getName());
-        event.setPackageName(this.getPackageName());
-        event.setEnabled(true);
-        event.getText().clear();
-        event.getText().add(string);
-        event.getText().add(":");
-        //MyLog.i("SimpleActivity event: " + event.toString());
-        if(dispatchPopulateAccessibilityEvent(event)) {
-            MyLog.i("SimpleActivity dispatchPopulateAccessibilityEvent says OK");
-        }
-        else {
-            MyLog.i("SimpleActivity dispatchPopulateAccessibilityEvent says ???");
-        }
-        manager.sendAccessibilityEvent(event);
-        MyLog.i("SimpleActivity sent accessibility event");
-    }
-
-    String filterText(String input) {
-        String[] words = input.split(" ");
-        ArrayList<String> result = new ArrayList<String>();
-        StringBuilder sb = new StringBuilder();
-        for(String word : words) {
-            if(word.charAt(0) == '[' && word.charAt(word.length()-1) == ']') continue;
-            if(word.charAt(0) == '<' && word.charAt(word.length()-1) == '>') continue;
-            if(sb.length() > 0) sb.append(" ");
-            sb.append(word);
-        }
-        return sb.toString();
-    }
-
     @Override
     public void onDestroy() {
         MyLog.i("onDestroy");
@@ -586,60 +567,9 @@ public class SimpleActivity extends Activity {
             ed_result.setText(result + ".");
             if (Overlay.getOverlayExists())
                 overlay.setText(result + ".");
-
-            String canonical = filterText(result);
-            MyLog.i("SimpleActivity recognized [" + canonical + "]");
-
-            if (canonical.equals("stop listening")) {
-                MyLog.i("SimpleActivity spotted stop listening");
-                //onFinish("stop command called");
-                stopListening();
-            }
-            if (canonical.equals("foreground")) {
-                MyLog.i("SimpleActivity spotted foreground");
-                bringApplicationToForeground();
-                MyLog.i("SimpleActivity sent foreground");
-            }
-            if (canonical.equals("background")) { //change command to home ????????????????
-                MyLog.i("SimpleActivity spotted background");
-                bringApplicationToBackground();
-                MyLog.i("SimpleActivity sent background");
-            }
-            /*if (canonical.equals("back")) {
-                MyLog.i("SimpleActivity spotted background");
-                onBackPressed();
-                MyLog.i("SimpleActivity sent background");
-            }*/
-
-            if(!manager.isEnabled()) { // This will never be called bc start button
-                ed_result.setText(result + "...[service not running]");
-
-                MyLog.i("SimpleActivity manager not enabled");
-                return;
-            }
-
-            if (canonical.equals("next page")) {
-                MyLog.i("SimpleActivity spotted next page");
-                sendAccessibilityEvent("next");
-                MyLog.i("SimpleActivity sent next page");
-            }
-            if (canonical.equals("previous page")) {
-                MyLog.i("SimpleActivity spotted previous page");
-                sendAccessibilityEvent("previous");
-                MyLog.i("SimpleActivity sent previous page");
-            }
-            if (canonical.equals("center")) {
-                MyLog.i("SimpleActivity spotted center");
-                sendAccessibilityEvent("center");
-                MyLog.i("SimpleActivity sent center");
-            }
-            if (canonical.equals("unknowncommande")) {
-                MyLog.i("SimpleActivity spotted ");
-                if(Overlay.getOverlayExists())
-                    overlay.hide();
-                MyLog.i("SimpleActivity paused listening");
-            }
+            executer.execute(result);
         }
+
 
         @Override
         public void onNoConnection(String reason) {
@@ -691,95 +621,4 @@ public class SimpleActivity extends Activity {
         }
     }
 
-    class ThreadAdapter implements Recognizer.Listener {
-        Recognizer.Listener realCode;  // accessed from main UI thread only
-
-        public ThreadAdapter(Recognizer.Listener realCode) {
-            this.realCode = realCode;
-        }
-
-        public void stop() {
-            this.realCode = null;  // no need for synchronized
-        }
-
-        @Override
-        public void onNoConnection(final String reason) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    if(realCode != null) realCode.onNoConnection(reason);
-                }
-            });}
-
-        @Override
-        public void onReady(final String reason) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    if(realCode != null) realCode.onReady(reason);
-                }
-            });}
-
-        @Override
-        public void onRecordingBegin(){
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    if(realCode != null) realCode.onRecordingBegin();
-                }
-            });}
- 
-        @Override       
-        public void onRecordingDone(){
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    if(realCode != null) realCode.onRecordingDone();
-                }
-            });}
- 
-        @Override       
-        public void onError(final Exception error){
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    if(realCode != null) realCode.onError(error);
-                }
-            });}
- 
-        @Override       
-        public void onPartialResult(final String result){
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    if(realCode != null) realCode.onPartialResult(result);
-                }
-            });}
- 
-        @Override       
-        public void onFinalResult(final String result){
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    if(realCode != null) realCode.onFinalResult(result);
-                }
-            });}
- 
-        @Override       
-        public void onFinish(final String reason){
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    if(realCode != null) realCode.onFinish(reason);
-                }
-            });}
- 
-        @Override       
-        public void onNotReady(final String reason){
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    if(realCode != null) realCode.onNotReady(reason);
-                }
-            });}
- 
-        @Override       
-        public void onUpdateStatus(final SpeechKit.Status status){
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    if(realCode != null) realCode.onUpdateStatus(status);
-                }
-            });}
-    }
 }

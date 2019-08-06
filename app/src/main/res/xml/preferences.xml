@@ -46,47 +46,52 @@
     <PreferenceScreen
         app:title="Commands">
 
-        <Preference
-            app:key="swipeLeft"
-            app:title="Swipe Left"
-            app:summary="a swipe is initiated from the right to left side of the screen">
-        </Preference>
+        <PreferenceCategory
+            app:title="general">
 
-        <Preference
-            app:key="swipeRight"
-            app:title="Swipe Right"
-            app:summary="a swipe is initiated from the left to right side of the screen">
-        </Preference>
+            <Preference
+                app:key="swipeLeft"
+                app:title="Swipe Left"
+                app:summary="a swipe is initiated from the right to left side of the screen">
+            </Preference>
 
-        <Preference
-            app:key="swipeUp"
-            app:title="Swipe Up"
-            app:summary="a swipe is initiated from the bottom to top of the screen">
-        </Preference>
+            <Preference
+                app:key="swipeRight"
+                app:title="Swipe Right"
+                app:summary="a swipe is initiated from the left to right side of the screen">
+            </Preference>
 
-        <Preference
-            app:key="swipeDown"
-            app:title="Swipe Down"
-            app:summary="a swipe is initiated from the top to bottom of the screen">
-        </Preference>
+            <Preference
+                app:key="swipeUp"
+                app:title="Swipe Up"
+                app:summary="a swipe is initiated from the bottom to top of the screen">
+            </Preference>
 
-        <Preference
-            app:key="home"
-            app:title="Home"
-            app:summary="simulates a click to the home button">
-        </Preference>
+            <Preference
+                app:key="swipeDown"
+                app:title="Swipe Down"
+                app:summary="a swipe is initiated from the top to bottom of the screen">
+            </Preference>
 
-        <Preference
-            app:key="back"
-            app:title="Back"
-            app:summary="simulates a click to the back button">
-        </Preference>
+            <Preference
+                app:key="home"
+                app:title="Home"
+                app:summary="simulates a click to the home button">
+            </Preference>
 
-        <Preference
-            app:key="menu"
-            app:title="Menu"
-            app:summary="simulates a click to the menu button">
-        </Preference>
+            <Preference
+                app:key="back"
+                app:title="Back"
+                app:summary="simulates a click to the back button">
+            </Preference>
+
+            <Preference
+                app:key="menu"
+                app:title="Menu"
+                app:summary="simulates a click to the menu button">
+            </Preference>
+
+        </PreferenceCategory>
 
     </PreferenceScreen>
 

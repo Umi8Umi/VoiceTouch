@@ -130,10 +130,10 @@ public class MyAccessibilityService extends AccessibilityService {
             Log.i("accessibilityservice", "announce event text is [" + text + "]");
 
             if(text.equals("next")) {
-                doGesture(GestureType.GESTURE_TAP_LEFT_SIDE);
+                doGesture(GestureType.GESTURE_TAP_RIGHT_SIDE);
             }
             else if(text.equals("previous")) {
-                doGesture(GestureType.GESTURE_TAP_RIGHT_SIDE);
+                doGesture(GestureType.GESTURE_TAP_LEFT_SIDE);
             }
             else if(text.equals("left")) {
                 doGesture(GestureType.GESTURE_SWIPE_LEFT);

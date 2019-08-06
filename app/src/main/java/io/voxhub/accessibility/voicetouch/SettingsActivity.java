@@ -1,12 +1,19 @@
 package io.voxhub.accessibility.voicetouch;
 
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.SharedPreferences;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.preference.EditTextPreference;
 import android.preference.SwitchPreference;
 import android.os.Bundle;
+import java.util.HashMap;
+import java.util.List;
 
 public class SettingsActivity extends PreferenceActivity {
     
@@ -39,11 +46,49 @@ public class SettingsActivity extends PreferenceActivity {
         editor.apply();
     }
 
+    protected HashMap<String,String> getInstalledPackages(){
+        PackageManager packageManager = getPackageManager();
+
+        // Initialize a new intent
+        Intent intent = new Intent(Intent.ACTION_MAIN,null);
+        // Set the intent category
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        // Set the intent flags
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                |Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+
+        // Initialize a new list of resolve info
+        List<ResolveInfo> resolveInfoList = getPackageManager().queryIntentActivities(intent,0);
+
+        // Initialize a new hash map of package names and application label
+        HashMap<String,String> map = new HashMap<String,String>();
+
+        // Loop through the resolve info list
+        for(ResolveInfo resolveInfo : resolveInfoList){
+            // Get the activity info from resolve info
+            ActivityInfo activityInfo = resolveInfo.activityInfo;
+
+            // Get the package name
+            String packageName = activityInfo.applicationInfo.packageName;
+
+            // Get the application label
+            String label = (String) packageManager.getApplicationLabel(activityInfo
+                .applicationInfo);
+
+            // Put the package name and application label to hash map
+            map.put(packageName,label);
+        }
+        return map;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
-        
+
+        //installed-app-list
+//        HashMap<String,String> map = getInstalledPackages();
+
         final SwitchPreference hovertext = (SwitchPreference) findPreference(this.getResources()
                                            .getString(R.string.hover_text)); 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -92,6 +137,17 @@ public class SettingsActivity extends PreferenceActivity {
                 return true;
             }
         });
+
+        //installed-app-list
+/*        final PreferenceCategory cat = new PreferenceCategory(getApplicationContext());
+        cat.setTitle(R.string.installedApps);
+        for (final String appName :map.keySet()) {
+            final Preference app = new Preference(getApplicationContext());
+            app.setTitle(appName);
+            app.setSummary(map.get(appName));
+            cat.addPreference(app);
+        }
+*/
 
     }
 }

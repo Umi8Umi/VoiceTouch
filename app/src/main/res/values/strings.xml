@@ -21,6 +21,7 @@
     <string name="help_title">HELP</string>
     <string name="faq">FAQ</string>
     <string name="txt_btn_help">Help</string>
+    <string name="installedApps">Installed Applications</string>
    
 
     <string name="setting_lang_title">Choose language</string>
