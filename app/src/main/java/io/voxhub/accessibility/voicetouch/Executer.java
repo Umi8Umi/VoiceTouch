@@ -3,67 +3,20 @@ import jp.naist.ahclab.speechkit.logs.MyLog;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.ScaleAnimation;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnFocusChangeListener;
-import android.view.ViewParent;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import jp.naist.ahclab.speechkit.Recognizer;
-import jp.naist.ahclab.speechkit.ServerInfo;
-import jp.naist.ahclab.speechkit.SpeechKit;
-import jp.naist.ahclab.speechkit.view.ListeningDialog;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
 import java.util.LinkedList;
-
-import android.accessibilityservice.AccessibilityService;
-import android.accessibilityservice.AccessibilityServiceInfo;
-import android.content.Context;
-import android.content.Intent;
-import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.ResolveInfo;
-import android.content.pm.PackageManager;
-import android.content.SharedPreferences;
-import android.graphics.PixelFormat;
-import android.graphics.Color;
-import android.Manifest;
-import android.net.Uri;
-import android.provider.Settings;
-import android.preference.Preference;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat; 
-import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.WindowManager;
-import android.view.accessibility.AccessibilityEvent;
-import android.view.accessibility.AccessibilityManager;
-import android.view.Gravity;
-import android.view.ViewGroup;
 
 public class Executer{
 
@@ -179,6 +132,7 @@ public class Executer{
     private void runOne() {
         isRunningOne = true;
         Command c;
+        int counter = 0;
         boolean firstCommand = true;
         final Handler handler = new Handler();
         while(commandList.size() > 0) {
@@ -188,18 +142,11 @@ public class Executer{
                 c.run();
                 firstCommand = false;
             }
-            //MyLog.i("just ran command and list size is: " + commandList.size());
             else{
-                handler.postDelayed(c, 1000);
+                counter += 1000;
+                handler.postDelayed(c, counter);
                 MyLog.i("postDelayed happened");
             }
-            /*try {
-                synchronized (simpleActivity) {
-                    simpleActivity.wait(500);
-                }
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }*/
         }
         isRunningOne = false;
     }
@@ -254,187 +201,3 @@ public class Executer{
         }
     }
 }
-
-
-
-
-
-            /*if (canonical.equals("go back")) {
-                MyLog.i("SimpleActivity spotted background");
-                onBackPressed();
-                MyLog.i("SimpleActivity sent background");
-            }*/
-/*        
-        public void onFinalResultLong(String canonical) {
-            String[] tempArray = canonical.split(" ");
-            final Handler handler = new Handler();
-            for(int i = 0; i < tempArray.length; i++) {
-                if (tempArray[i].equals("center")) {
-                    MyLog.i("SimpleActivity spotted center");
-                    if(i == 0)
-                        sendAccessibilityEvent("center");
-                    MyLog.i("SimpleActivity sent center");
-//                    sleep(1000);
-                    if(i > 0) {
-//                        final Handler handler = new Handler();
-                        handler.postDelayed(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    sendAccessibilityEvent("center");
-                                }
-                            }, 500 * i + 500);
-                    }
-                }
-                else if (i < (tempArray.length - 1) && 
-                    (tempArray[i]+ " " + tempArray[i+1]).equals("stop listening")) {
-                    MyLog.i("SimpleActivity spotted stop listening");
-                    stopListening();
-                }
-                else if ((tempArray[i]).equals("foreground")) {
-                    MyLog.i("SimpleActivity spotted foreground");
-                    if(i == 0)
-                        bringApplicationToForeground();
-                    MyLog.i("SimpleActivity sent foreground");
-//                    sleep(1000);
-                    if(i > 0) {
-//                        final Handler handler = new Handler();
-                        handler.postDelayed(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    bringApplicationToForeground();
-                                }
-                            }, 500 * i);
-                    }
-                }
-                else if (i < (tempArray.length - 1) && 
-                    (tempArray[i]+ " " + tempArray[i+1]).equals("go home")) { 
-                    MyLog.i("SimpleActivity spotted background");
-                    if(i == 0)
-                        bringApplicationToBackground();
-                    MyLog.i("SimpleActivity sent background");
-//                    sleep(1000);
-                    if(i > 0) {
-//                        final Handler handler = new Handler();
-                        handler.postDelayed(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    bringApplicationToBackground();
-                                }
-                            }, 500 * i);
-                    }
-                }
-                else if (i < (tempArray.length - 1) && 
-                    (tempArray[i]+ " " + tempArray[i+1]).equals("next page")) {
-                    MyLog.i("SimpleActivity spotted next page");
-                    if(i == 0)
-                        sendAccessibilityEvent("next");
-                    MyLog.i("SimpleActivity sent next page");
-//                    sleep(1000);
-                    if(i > 0) {
-//                        final Handler handler = new Handler();
-                        handler.postDelayed(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    sendAccessibilityEvent("next");
-                                }
-                            }, 500 * i);
-                    }
-                }
-                else if (i < (tempArray.length - 1) && 
-                    (tempArray[i]+ " " + tempArray[i+1]).equals("previous page")) {
-                    MyLog.i("SimpleActivity spotted previous page");
-                    if(i == 0)
-                        sendAccessibilityEvent("previous");
-                    MyLog.i("SimpleActivity sent previous page");
-//                    sleep(1000);
-                    if(i > 0) {
-//                        final Handler handler = new Handler();
-                        handler.postDelayed(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    sendAccessibilityEvent("previous");
-                                }
-                            }, 500 * i);
-                    }
-                }
-                else if (i < (tempArray.length - 1) && 
-                    (tempArray[i]+ " " + tempArray[i+1]).equals("swipe left")) {
-                    MyLog.i("SimpleActivity spotted next page");
-                    if(i == 0)
-                        sendAccessibilityEvent("left");
-                    MyLog.i("SimpleActivity sent next page");
-//                    sleep(1000);
-                    if(i > 0) {
-//                        final Handler handler = new Handler();
-                        handler.postDelayed(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    sendAccessibilityEvent("left");
-                                }
-                            }, 500 * i);
-                    }
-                }
-                else if (i < (tempArray.length - 1) && 
-                    (tempArray[i]+ " " + tempArray[i+1]).equals("swipe right")) {
-                    MyLog.i("SimpleActivity spotted next page");
-                    if(i == 0)
-                        sendAccessibilityEvent("right");
-                    MyLog.i("SimpleActivity sent next page");
-//                    sleep(1000);
-                    if(i > 0) {
-//                        final Handler handler = new Handler();
-                        handler.postDelayed(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    sendAccessibilityEvent("right");
-                                }
-                            }, 500 * i);
-                    }
-                }
-                else if (i < (tempArray.length - 1) && 
-                    (tempArray[i]+ " " + tempArray[i+1]).equals("swipe up")) {
-                    MyLog.i("SimpleActivity spotted previous page");
-                    if(i == 0)
-                        sendAccessibilityEvent("up");
-                    MyLog.i("SimpleActivity sent previous page");
-//                    sleep(1000);
-                    if(i > 0) {
-//                        final Handler handler = new Handler();
-                        handler.postDelayed(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    sendAccessibilityEvent("up");
-                                }
-                            }, 500 * i);
-                    }
-                }
-                else if (i < (tempArray.length - 1) && 
-                    (tempArray[i]+ " " + tempArray[i+1]).equals("swipe down")) {
-                    MyLog.i("SimpleActivity spotted previous page");
-                    if(i == 0)
-                        sendAccessibilityEvent("down");
-                    MyLog.i("SimpleActivity sent previous page");
- //                   sleep(1000);
-                    if(i > 0) {
-//                        final Handler handler = new Handler();
-                        handler.postDelayed(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    sendAccessibilityEvent("down");
-                                }
-                            }, 500 * i);
-                    }
-                }
-                MyLog.i("onFinalResultLong: " + i);
-            }
-        }
-        */
