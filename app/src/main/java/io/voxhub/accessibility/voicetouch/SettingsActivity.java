@@ -46,7 +46,7 @@ public class SettingsActivity extends PreferenceActivity {
         editor.apply();
     }
 
-    protected HashMap<String,String> getInstalledPackages(){
+/*    protected HashMap<String,String> getInstalledPackages(){
         PackageManager packageManager = getPackageManager();
 
         // Initialize a new intent
@@ -79,7 +79,7 @@ public class SettingsActivity extends PreferenceActivity {
             map.put(packageName,label);
         }
         return map;
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

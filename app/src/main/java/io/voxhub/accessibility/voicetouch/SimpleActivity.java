@@ -93,7 +93,7 @@ public class SimpleActivity extends Activity {
     private ProgressBar progress;
    // private ProgressBar pb;
     private Overlay overlay = null;
-    private EditText ed_result;
+    /*private*/ EditText ed_result;
     private boolean requestListen = false;
     private boolean askedForOverlayPermission;
 
@@ -235,7 +235,7 @@ public class SimpleActivity extends Activity {
                 new Runnable() {
                     @Override
                     public void run() {
-                        bringApplicationToBackground();
+                        executer.bringApplicationToBackground();
                     }
                 }, 500);
             Toast.makeText(getApplicationContext(),
@@ -330,6 +330,7 @@ public class SimpleActivity extends Activity {
         setContentView(R.layout.activity_dictation);
 
         executer = new Executer(this);
+        executer.constructMap();
 
         //installed-app-list
         //mContext = getApplicationContext();
@@ -567,7 +568,7 @@ public class SimpleActivity extends Activity {
             ed_result.setText(result + ".");
             if (Overlay.getOverlayExists())
                 overlay.setText(result + ".");
-            executer.execute(result);
+            executer.executeCommand(result);
         }
 
 

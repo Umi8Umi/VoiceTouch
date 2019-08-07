@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+import java.util.LinkedList;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
@@ -68,8 +69,9 @@ public class Executer{
 
     private SimpleActivity simpleActivity;
     private AccessibilityManager manager;
-    private List<Command> exeList;
-    private HashMap<String, Command> commandsMap;
+    private LinkedList<Command> commandList = new LinkedList<Command>();
+    private HashMap<String, Command> commandsMap = new HashMap<String, Command>();
+    private boolean isRunningOne = false;
     
     public Executer (SimpleActivity s) {
         simpleActivity = s;
@@ -80,7 +82,7 @@ public class Executer{
         AccessibilityEvent event = AccessibilityEvent.obtain(AccessibilityEvent
             .TYPE_ANNOUNCEMENT);
         event.setClassName(getClass().getName());
-        event.setPackageName(this.getPackageName());
+        event.setPackageName(simpleActivity.getPackageName());
         event.setEnabled(true);
         event.getText().clear();
         event.getText().add(string);
@@ -109,15 +111,15 @@ public class Executer{
         return sb.toString();
     }
 
-    private void bringApplicationToBackground() {
+    void bringApplicationToBackground() {
         Intent i = new Intent(Intent.ACTION_MAIN);
         i.addCategory(Intent.CATEGORY_HOME);
-        startActivity(i);
+        simpleActivity.startActivity(i);
     }
     
     private void bringApplicationToForeground() {
         ActivityManager am =
-            (ActivityManager) getSystemService(SimpleActivity.this.ACTIVITY_SERVICE);
+            (ActivityManager) simpleActivity.getSystemService(simpleActivity.ACTIVITY_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             List<ActivityManager.AppTask> tasksList = am.getAppTasks();
             for (ActivityManager.AppTask task : tasksList){
@@ -131,7 +133,7 @@ public class Executer{
                 int nSize = tasksList.size();
                 for(int i = 0; i < nSize;  i++){
                     if(tasksList.get(i).topActivity.getPackageName()
-                        .equals(getPackageName())){
+                        .equals(simpleActivity.getPackageName())){
                         
                         am.moveTaskToFront(tasksList.get(i).id, 0);
                     }
@@ -140,6 +142,99 @@ public class Executer{
         }
     }
 
+    void constructMap() {
+        commandsMap.put("next page",        new AccessibilityCommand("next"));
+        commandsMap.put("previous page",    new AccessibilityCommand("previous"));
+        commandsMap.put("swipe up",         new AccessibilityCommand("up"));
+        commandsMap.put("swipe down",       new AccessibilityCommand("down"));
+        commandsMap.put("swipe left",       new AccessibilityCommand("left"));
+        commandsMap.put("swipe right",      new AccessibilityCommand("right"));
+        commandsMap.put("center",           new AccessibilityCommand("center"));
+        commandsMap.put("stop listening",   new Command() {
+                                                @Override
+                                                public void run() {
+                                                    MyLog.i("SimpleActivity spotted " +
+                                                        "stop listening");
+                                                    simpleActivity.stopListening();
+                                                    MyLog.i("SimpleActivity sent " +
+                                                        "stop listening");
+                                                }
+                                                public boolean isInstant() {return true;} });
+        commandsMap.put("go home",          new Command() {
+                                                @Override
+                                                public void run() {
+                                                    MyLog.i("SimpleActivity spotted go home");
+                                                    bringApplicationToBackground();
+                                                    MyLog.i("SimpleActivity sent go home");
+                                                } });
+        commandsMap.put("foreground",       new Command() {
+                                                @Override
+                                                public void run() {
+                                                    MyLog.i("SimpleActivity spotted background");
+                                                    bringApplicationToForeground();
+                                                    MyLog.i("SimpleActivity sent background");
+                                                } });
+    }
+
+    private void runOne() {
+        isRunningOne = true;
+        Command c;
+        boolean firstCommand = true;
+        final Handler handler = new Handler();
+        while(commandList.size() > 0) {
+            c = commandList.removeFirst();
+            MyLog.i("commandList size after remove: " + commandList.size());
+            if(firstCommand) {
+                c.run();
+                firstCommand = false;
+            }
+            //MyLog.i("just ran command and list size is: " + commandList.size());
+            else{
+                handler.postDelayed(c, 1000);
+                MyLog.i("postDelayed happened");
+            }
+            /*try {
+                synchronized (simpleActivity) {
+                    simpleActivity.wait(500);
+                }
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }*/
+        }
+        isRunningOne = false;
+    }
+
+    public void executeCommand(String s) {
+        if(!manager.isEnabled()) { 
+            simpleActivity.ed_result.setText(s + "...[service not running]");
+            MyLog.i("SimpleActivity manager not enabled");
+            return;
+        }
+        String canonical = filterText(s);
+        MyLog.i("SimpleActivity recognized [" + canonical + "]");
+        String[] words = canonical.split(" ");
+        StringBuilder sb = new StringBuilder();
+        Command c;
+        for(String word : words) {
+            if(sb.length() > 0) sb.append(" ");
+            sb.append(word);
+            if(commandsMap.containsKey(sb.toString()) == false)
+                continue;
+            else{
+                MyLog.i("found command: " + sb.toString());
+                c = commandsMap.get(sb.toString());
+                if (!c.isInstant()){
+                    commandList.add(c);
+                    MyLog.i("commandList size: " + commandList.size());}
+                else c.run();
+                sb.delete(0,sb.length());
+            }
+        }
+        if(!isRunningOne && commandList.size() > 0)
+            MyLog.i("runOne is about to be entered");
+            runOne();
+    }
+        
     abstract class Command implements Runnable {
         public abstract void run();
         public boolean isInstant() {return false;}
@@ -153,100 +248,23 @@ public class Executer{
         }
         
         public void run() {
+            MyLog.i("SimpleActivity spotted " + action);
             sendAccessibilityEvent(action);
+            MyLog.i("SimpleActivity sent " + action);
         }
     }
 }
 
 
 
-    private void constructMap() {
-        commandsMap.put("next page",        new AccessibilityCommand("next"));
-        commandsMap.put("previous page",    new AccessibilityCommand("previous"));
-        commandsMap.put("swipe up",         new AccessibilityCommand("swipe up"));
-        commandsMap.put("swipe down",       new AccessibilityCommand("swipe down"));
-        commandsMap.put("go home",          new AccessibilityCommand("go home"));
-        commandsMap.put("center",           new AccessibilityCommand("center"));
-        commandsMap.put("stop listening", );
-        commandsMap.put("foreground", );
-    }
 
 
-            String canonical = filterText(result);
-            MyLog.i("SimpleActivity recognized [" + canonical + "]");
-
-            if (canonical.equals("stop listening")) {
-                MyLog.i("SimpleActivity spotted stop listening");
-                stopListening();
-            }
-            else if (canonical.equals("foreground")) {
-                MyLog.i("SimpleActivity spotted foreground");
-                bringApplicationToForeground();
-                MyLog.i("SimpleActivity sent foreground");
-            }
-            else if (canonical.equals("go home")) { 
-                MyLog.i("SimpleActivity spotted background");
-                bringApplicationToBackground();
-                MyLog.i("SimpleActivity sent background");
-            }
-            /*if (canonical.equals("back")) {
+            /*if (canonical.equals("go back")) {
                 MyLog.i("SimpleActivity spotted background");
                 onBackPressed();
                 MyLog.i("SimpleActivity sent background");
             }*/
-
-            else if(!manager.isEnabled()) { // This will never be called bc start button
-                ed_result.setText(result + "...[service not running]");
-
-                MyLog.i("SimpleActivity manager not enabled");
-                return;
-            }
-
-            else if (canonical.equals("next page")) {
-                MyLog.i("SimpleActivity spotted next page");
-                sendAccessibilityEvent("next");
-                MyLog.i("SimpleActivity sent next page");
-            }
-            else if (canonical.equals("previous page")) {
-                MyLog.i("SimpleActivity spotted previous page");
-                sendAccessibilityEvent("previous");
-                MyLog.i("SimpleActivity sent previous page");
-            }
-            else if (canonical.equals("swipe left")) {
-                MyLog.i("SimpleActivity spotted next page");
-                sendAccessibilityEvent("left");
-                MyLog.i("SimpleActivity sent next page");
-            }
-            else if (canonical.equals("swipe right")) {
-                MyLog.i("SimpleActivity spotted next page");
-                sendAccessibilityEvent("right");
-                MyLog.i("SimpleActivity sent next page");
-            }
-            else if (canonical.equals("swipe up")) {
-                MyLog.i("SimpleActivity spotted previous page");
-                sendAccessibilityEvent("up");
-                MyLog.i("SimpleActivity sent previous page");
-            }
-            else if (canonical.equals("swipe down")) {
-                MyLog.i("SimpleActivity spotted previous page");
-                sendAccessibilityEvent("down");
-                MyLog.i("SimpleActivity sent previous page");
-            }
-            else if (canonical.equals("center")) {
-                MyLog.i("SimpleActivity spotted center");
-                sendAccessibilityEvent("center");
-                MyLog.i("SimpleActivity sent center");
-            }
-            else {
-                onFinalResultLong(canonical);
-            }
-            /*if (canonical.equals("unknowncommande")) {
-                MyLog.i("SimpleActivity spotted ");
-                if(Overlay.getOverlayExists())
-                    overlay.hide();
-                MyLog.i("SimpleActivity paused listening");
-            }*/
-        
+/*        
         public void onFinalResultLong(String canonical) {
             String[] tempArray = canonical.split(" ");
             final Handler handler = new Handler();
@@ -419,3 +437,4 @@ public class Executer{
                 MyLog.i("onFinalResultLong: " + i);
             }
         }
+        */
