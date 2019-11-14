@@ -27,3 +27,8 @@ proguard/
 # vim
 *.swp
 *.swo
+
+
+#jetbrains android studio
+.idea/*
+*.iml
