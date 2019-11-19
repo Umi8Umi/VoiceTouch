@@ -32,3 +32,6 @@ proguard/
 #jetbrains android studio
 .idea/*
 *.iml
+app/.idea/*
+service/.idea/*
+speechkit/idea/*
