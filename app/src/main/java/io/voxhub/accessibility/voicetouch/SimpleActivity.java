@@ -1,4 +1,5 @@
 package io.voxhub.accessibility.voicetouch;
+import io.voxhub.accessibility.voicetouch.gesture.GestureListActivity;
 import jp.naist.ahclab.speechkit.logs.MyLog;
 
 import android.app.Activity;
@@ -7,6 +8,7 @@ import android.app.AlertDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.accessibility.AccessibilityManager;
 import android.view.animation.Animation;
@@ -88,6 +90,7 @@ public class SimpleActivity extends Activity {
     private Button btn_enable;
     private Button btn_overlay;
     private Button btn_about;
+    private Button btn_gesture;
    // private Button btn_help;
     private ImageButton btn_help;
     private ProgressBar progress;
@@ -204,6 +207,7 @@ public class SimpleActivity extends Activity {
         makeOverlay(pref.getBoolean("overlay_enabled", true));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void updateOverlayUI() {
         makeOverlay();
         btn_overlay.setVisibility(Settings.canDrawOverlays(this) ? View.GONE : View.VISIBLE);
@@ -253,6 +257,7 @@ public class SimpleActivity extends Activity {
         btn_stop.setVisibility(View.INVISIBLE);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void updateState() {
         btn_enable.setVisibility(manager.isEnabled() ? View.GONE : View.VISIBLE); 
         updateOverlayUI();
@@ -322,6 +327,7 @@ public class SimpleActivity extends Activity {
         return map;
     }*/
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         MyLog.i("onCreate has been entered");
@@ -351,6 +357,7 @@ public class SimpleActivity extends Activity {
         btn_enable = (Button) this.findViewById(R.id.btn_enable);
         btn_overlay = (Button) this.findViewById(R.id.btn_overlay); 
         btn_about = (Button) this.findViewById(R.id.btn_about);
+        btn_gesture = (Button) this.findViewById(R.id.btn_gesture);
         btn_help = (ImageButton) this.findViewById(R.id.btn_help);
         progress = (ProgressBar)findViewById(R.id.progress_listening);
         ed_result = (EditText)findViewById(R.id.ed_result);
@@ -442,6 +449,14 @@ public class SimpleActivity extends Activity {
             }
         });
 
+        btn_gesture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { // Open about page
+                Intent intent = new Intent(SimpleActivity.this, GestureListActivity.class);
+                startActivity(intent);
+            }
+        });
+
         btn_help.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { // Open about page
@@ -472,6 +487,7 @@ public class SimpleActivity extends Activity {
         updateState();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         MyLog.i("requestCode: " + requestCode + " resultCode: " + resultCode + " data: " + data);
@@ -510,6 +526,7 @@ public class SimpleActivity extends Activity {
         super.onDestroy();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onResume() {
         make_speechkit();

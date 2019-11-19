@@ -11,6 +11,7 @@
     <string name="txt_hoverText">Hover Text</string>
     <string name="txt_btn_enable">Enable Accessibility Service</string>
     <string name="txt_btn_about">About</string>
+    <string name="txt_btn_gesture">Gesture</string>
     <string name="txt_btn_reset">Reset</string>
     <string name="about_title">ABOUT</string>
     <string name="contributors">Contributors</string>
@@ -50,4 +51,11 @@
     <string name="default_server_app_status">/ja/speech-api/ws/status</string>
     <string name="default_server_app_speech">/ja/speech-api/ws//speech</string>
 -->
+
+    <string name="add_gesture">Add a gesture</string>
+    <string name="gesture_name">Gesture name</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <color name="black">#000000</color>
+    <color name="semi_black">#99000000</color>
 </resources>
