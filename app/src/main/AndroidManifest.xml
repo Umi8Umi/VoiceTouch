@@ -47,9 +47,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.voxhub.accessibility.voicetouch.gesture.GestureListActivity" />
         </activity>
-
+        
         <activity android:name="io.voxhub.accessibility.voicetouch.gesture.GestureListActivity"
             android:parentActivityName="io.voxhub.accessibility.voicetouch.SimpleActivity">
+
         </activity>
 
         <activity android:name="io.voxhub.accessibility.voicetouch.gesture.AddGestureActivity"
