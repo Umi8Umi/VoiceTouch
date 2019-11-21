@@ -43,7 +43,11 @@ public class FingerLine extends View {
 
 
         Path path = new Path();
-        if (points.size() > 1) {
+        if (points.size() >= 1) {
+            //draw a large dot for the first point
+            canvas.drawCircle(points.get(0).x, points.get(0).y, 10, paint);
+
+            //draw path
             Point prevPoint = null;
             for (int i = 0; i < points.size(); i++) {
                 Point point = points.get(i);

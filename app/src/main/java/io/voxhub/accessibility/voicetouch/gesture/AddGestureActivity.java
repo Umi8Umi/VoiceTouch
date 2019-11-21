@@ -34,6 +34,8 @@ public class AddGestureActivity extends Activity {
     private String gestureName;
     private static Bitmap backgroundPic;
 
+    private boolean waitState = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +71,57 @@ public class AddGestureActivity extends Activity {
 
         //Check for touches on our main layout
         fl = (FingerLine) findViewById(R.id.finger_line);
+
+
+        Bundle extras = getIntent().getExtras();
+        String source = extras.getString("source");
+
+        if(backgroundPic != null){
+            ImageView image = (ImageView) findViewById(R.id.background_pic);
+            image.setImageBitmap(backgroundPic);
+        }
+
+
+
+        //Start a thread that will keep count of the time
+        final Thread t = new Thread("Listen for touch thread") {
+            public void run() {
+                while(true){
+                    try{
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(inProgress == false){
+                        //Incement the delay
+                        delay += 1000;
+                        mProgressBar.setProgress((int)delay/1000*100/(3000/1000));
+                        //If our delay in MS is over 10,000
+                        if (delay > 2000) {
+                            Bitmap screenShot = getScreenShot();
+                            List<Point> list = fl.getPoints();
+                            saveCurrentGesture(list, screenShot, backgroundPic);
+                            backgroundPic = null;
+                            return;
+                        }
+                    }
+                }
+            }
+        };
+
+
+
+
+        if(source.equals("GestureSettingActivity")){
+            String points = extras.getString("points");
+            fl.points = convertStrToPointlist(points);
+            gestureName = extras.getString("name");
+            waitState = false;
+            t.start();
+        }
+
+
         fl.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -76,6 +129,10 @@ public class AddGestureActivity extends Activity {
                 delay = 0;
                 mProgressBar.setProgress(0);
                 if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    if(waitState == true){
+                        waitState = false;
+                        t.start();
+                    }
                     mProgressBar.setVisibility(View.INVISIBLE);
                     inProgress = true;
                 }else if(event.getAction() == MotionEvent.ACTION_UP){
@@ -87,47 +144,12 @@ public class AddGestureActivity extends Activity {
             }
         });
 
-        Bundle extras = getIntent().getExtras();
-        String source = extras.getString("source");
-
-        if(source.equals("GestureSettingActivity")){
-            String points = extras.getString("points");
-            fl.points = convertStrToPointlist(points);
-            gestureName = extras.getString("name");
-        }
-
-        if(backgroundPic != null){
-            ImageView image = (ImageView) findViewById(R.id.background_pic);
-            image.setImageBitmap(backgroundPic);
-        }
 
 
-        //Start a thread that will keep count of the time
-        new Thread("Listen for touch thread") {
-            public void run() {
-                    while(true){
-                        try{
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
 
-                        if(inProgress == false){
-                            //Incement the delay
-                            delay += 1000;
-                            mProgressBar.setProgress((int)delay/1000*100/(3000/1000));
-                            //If our delay in MS is over 10,000
-                            if (delay > 2000) {
-                                Bitmap screenShot = getScreenShot();
-                                List<Point> list = fl.getPoints();
-                                saveCurrentGesture(list, screenShot, backgroundPic);
-                                backgroundPic = null;
-                                return;
-                            }
-                        }
-                    }
-                }
-            }.start();
+
+
+
 
 
     }
