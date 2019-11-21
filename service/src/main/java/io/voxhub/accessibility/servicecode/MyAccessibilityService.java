@@ -5,7 +5,9 @@ import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
 import android.content.SharedPreferences;
 import android.graphics.Path;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresApi;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
@@ -42,6 +44,7 @@ public class MyAccessibilityService extends AccessibilityService {
         GESTURE_TAP_CENTER,
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void doGesture(GestureType type) {
         SharedPreferences pref = PreferenceManager
             .getDefaultSharedPreferences(this);
@@ -121,6 +124,7 @@ public class MyAccessibilityService extends AccessibilityService {
         }, null);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         Log.i("accessibilityservice", "onAccessibilityEvent called, event: " + event.toString());
