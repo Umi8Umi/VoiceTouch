@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import io.voxhub.accessibility.voicetouch.gesture.Point;
+
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,8 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 
-
-
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -231,6 +232,22 @@ public class GestureSettingActivity extends Activity {
         viewGestureDialog.dismiss();
     }
 
+    public Bitmap getResizedBitmap(Bitmap image) {
+        int maxSize = 500;
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -241,7 +258,10 @@ public class GestureSettingActivity extends Activity {
             Uri selectedImage = data.getData();
 
             try {
-                currentBackground = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                //need to limit the file size to 100KB
+
+                Bitmap bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                currentBackground = getResizedBitmap(bm);
                 setBackGroundImg();
 
             } catch (FileNotFoundException e) {
