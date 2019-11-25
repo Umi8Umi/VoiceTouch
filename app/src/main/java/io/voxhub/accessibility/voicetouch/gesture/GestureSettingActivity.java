@@ -6,13 +6,15 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import io.voxhub.accessibility.voicetouch.gesture.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,8 +23,11 @@ import android.widget.ImageView;
 
 
 
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.voxhub.accessibility.voicetouch.R;
 import io.voxhub.accessibility.voicetouch.database.GestureData;
@@ -36,16 +41,33 @@ public class GestureSettingActivity extends Activity {
 
     String currentPoints;
     String currentName;
-    private static Bitmap currentImage;
     private static Bitmap currentBackground;
 
     private static final int GET_FROM_GALLERY = 1;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gesture_setting);
+
+        Display display = getWindowManager(). getDefaultDisplay();
+        android.graphics.Point size = new android.graphics.Point();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            display.getRealSize(size);
+        }else{
+            display.getSize(size);
+        }
+        int width = size.x;
+        int height = size.y;
+
+
+        //set the size of thumbnail picture
+        View thumbnailView = (View) findViewById(R.id.gesture_thumbnail_canvas);
+        thumbnailView.getLayoutParams().width = width/2;
+        thumbnailView.getLayoutParams().height = height/2;
+
 
         db = new GestureDataDbHelper(this);
 
@@ -57,9 +79,9 @@ public class GestureSettingActivity extends Activity {
 
             //search db to set the image and points
             GestureData data = db.getGesture(name);
-            currentPoints = data.getPoints();
-            currentImage = data.getImage();
             currentName = name;
+            currentPoints = data.getPoints();
+            currentBackground = data.getBackground();
 
         }else if(source.equals("AddGesture")){
             currentPoints = extras.getString("points");
@@ -67,12 +89,11 @@ public class GestureSettingActivity extends Activity {
                 currentName = extras.getString("name");
             }else
                 currentName = "default_name";
-
         }
 
+        setBackGroundImg();
         EditText editText =  (EditText) findViewById(R.id.gesture_name);
         editText.setText(currentName);
-
 
 
         viewGestureDialog = new Dialog(this, DialogFragment.STYLE_NO_FRAME);
@@ -94,31 +115,44 @@ public class GestureSettingActivity extends Activity {
         }
 
 
+        FingerLine thumbnail = (FingerLine) findViewById(R.id.gesture_img);
+        thumbnail.setHalfStrokeWidth();
+        thumbnail.setHalfRadius();
+        thumbnail.points = calcualteThumbnailPoints(PointsSerializer.convertStrToPointlist(currentPoints));
+        thumbnail.setPaintingMode(false);
+        thumbnail.setOnTouchListener(new View.OnTouchListener() {
 
-        ImageView image = (ImageView) findViewById(R.id.gesture_img);
-        image.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                ImageView imageDisplay = (ImageView) viewGestureDialog.findViewById(R.id.gesture_on_display);
-                Log.i("image display", String.valueOf(imageDisplay));
-                imageDisplay.setImageBitmap(currentImage);
+            public boolean onTouch(View v, MotionEvent event) {
+                ImageView image = (ImageView) viewGestureDialog.findViewById(R.id.background_pic_on_display);
+                image.setImageBitmap(currentBackground);
+                //draw on canvas
+                FingerLine imageDisplay = (FingerLine) viewGestureDialog.findViewById(R.id.gesture_on_display);
+                imageDisplay.points = PointsSerializer.convertStrToPointlist(currentPoints);
+
+                imageDisplay.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(event.getAction() == MotionEvent.ACTION_DOWN){
+                            viewGestureDialog.dismiss();
+                        }
+                        return false;
+                    }
+                });
+
+
 
                 viewGestureDialog.show();
 
+                return false;
             }
         });
 
-        image.setImageBitmap(currentImage);
 
 
     }
 
 
-
-
-    public void stopViewGesture(View view){
-        viewGestureDialog.dismiss();
-    }
 
 
 
@@ -127,7 +161,8 @@ public class GestureSettingActivity extends Activity {
         intent.putExtra("source","GestureSettingActivity");
         //pass the points
         intent.putExtra("points",currentPoints);
-        intent.putExtra("name",currentName);
+        EditText editText =  (EditText) findViewById(R.id.gesture_name);
+        intent.putExtra("name", String.valueOf(editText.getText()) );
         //pass the background pic
         AddGestureActivity.setBackgroundPic(currentBackground);
         currentBackground = null;
@@ -156,7 +191,7 @@ public class GestureSettingActivity extends Activity {
                         public void onClick(DialogInterface dialog, int which) {
                             // TODO Auto-generated method stub
                             //if it does not exist, save the gesture to database and redirect user to the gesture list page
-                            GestureData newGesture = new GestureData(currentName, currentPoints, currentImage, currentBackground);
+                            GestureData newGesture = new GestureData(currentName, currentPoints, currentBackground);
                             db.updateGesture(newGesture, currentName);
                             jumpToListPage();
                         }
@@ -166,7 +201,7 @@ public class GestureSettingActivity extends Activity {
                     .show();
         }else{
             //if it does not exist, save the gesture to database and redirect user to the gesture list page
-            GestureData newGesture = new GestureData(currentName, currentPoints, currentImage, currentBackground);
+            GestureData newGesture = new GestureData(currentName, currentPoints, currentBackground);
             db.addGesture(newGesture);
             jumpToListPage();
 
@@ -175,6 +210,8 @@ public class GestureSettingActivity extends Activity {
     }
 
     public void jumpToListPage(){
+        //clear picture memory
+        currentBackground = null;
         //redirect to gesture list page
         Intent intent = new Intent(this, GestureListActivity.class);
         startActivity(intent);
@@ -190,7 +227,9 @@ public class GestureSettingActivity extends Activity {
 
     }
 
-
+    public void stopViewGesture(View view){
+        viewGestureDialog.dismiss();
+    }
 
 
     @Override
@@ -200,11 +239,10 @@ public class GestureSettingActivity extends Activity {
         //Detects request codes
         if(requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
             Uri selectedImage = data.getData();
-            Bitmap bitmap = null;
+
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                AddGestureActivity.setBackgroundPic(bitmap);
-                jumpToEditGesture();
+                currentBackground = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                setBackGroundImg();
 
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
@@ -216,27 +254,31 @@ public class GestureSettingActivity extends Activity {
         }
     }
 
-
-
-    public void resetBackGroundImg(View view){
-        AddGestureActivity.setBackgroundPic(null);
-        jumpToEditGesture();
+    public void setBackGroundImg(){
+        ImageView image = (ImageView) findViewById(R.id.thumbnail_background_pic);
+        image.setImageBitmap(currentBackground);
     }
 
-
-    public void jumpToEditGesture(){
-        Intent intent = new Intent(this, AddGestureActivity.class);
-        intent.putExtra("source","GestureSettingActivity");
-        intent.putExtra("points",currentPoints);
-        intent.putExtra("name",currentName);
-        startActivity(intent);
+    public void clearBackGroundImg(View view){
+        currentBackground = null;
+        setBackGroundImg();
     }
 
 
 
-    public static void setScreenShotImage(Bitmap bm){
-        currentImage = bm;
+
+    public List<Point> calcualteThumbnailPoints(List<Point> list){
+        List<Point> result = new ArrayList<Point>();
+        for(Point p: list){
+            float x = p.x/2;
+            float y = p.y/2;
+            result.add(new Point(x,y));
+        }
+        return result;
     }
+
+
+
 
     public static void setBackgroundImage(Bitmap bm){
         currentBackground = bm;

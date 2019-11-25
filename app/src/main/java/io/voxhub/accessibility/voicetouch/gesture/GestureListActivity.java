@@ -61,8 +61,6 @@ public class GestureListActivity extends Activity {
             }
         });
 
-        //initialize other static parameters
-        GestureSettingActivity.setScreenShotImage(null);
 
     }
 

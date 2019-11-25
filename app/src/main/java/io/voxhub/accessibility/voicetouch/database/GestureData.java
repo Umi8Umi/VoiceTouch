@@ -6,13 +6,11 @@ public final class GestureData {
 
     private String name;
     private String points;
-    private Bitmap image;
     private Bitmap background;
 
-    public GestureData(String n, String p, Bitmap i, Bitmap b){
+    public GestureData(String n, String p,  Bitmap b){
         this.name = n;
         this.points = p;
-        this.image = i;
         this.background = b;
     }
 
@@ -32,9 +30,6 @@ public final class GestureData {
         return points;
     }
 
-    public Bitmap getImage() {
-        return image;
-    }
 
     public void setName(String name) {
         this.name = name;
@@ -44,7 +39,4 @@ public final class GestureData {
         this.points = points;
     }
 
-    public void setImage(Bitmap image) {
-        this.image = image;
-    }
 }

@@ -19,7 +19,12 @@ public class FingerLine extends View {
     private final Paint paint;
     public List<Point> points;
     private boolean paintingMode;
+    private int strokeWidth;
+    private int radius;
 
+    public void setPaintingMode(boolean paintingMode) {
+        this.paintingMode = paintingMode;
+    }
 
     public FingerLine(Context context) {
         this(context, null);
@@ -27,25 +32,27 @@ public class FingerLine extends View {
 
     public FingerLine(Context context, AttributeSet attrs) {
         super(context, attrs);
+        strokeWidth = 10;
+        radius = 10;
         paintingMode = true;
         points = new ArrayList<Point>();
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStyle(Style.STROKE);
-        paint.setStrokeWidth(10);
+        paint.setStrokeWidth(strokeWidth);
         paint.setColor(Color.WHITE);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if(paintingMode == false)
-            return;
+//        if(paintingMode == false)
+//            return;
         paint.setColor(Color.WHITE);
 
 
         Path path = new Path();
         if (points.size() >= 1) {
             //draw a large dot for the first point
-            canvas.drawCircle(points.get(0).x, points.get(0).y, 10, paint);
+            canvas.drawCircle(points.get(0).x, points.get(0).y, this.radius, paint);
 
             //draw path
             Point prevPoint = null;
@@ -92,7 +99,13 @@ public class FingerLine extends View {
     }
 
 
+    public void setHalfStrokeWidth(){
+        paint.setStrokeWidth(strokeWidth/2);
+    }
 
+    public void setHalfRadius(){
+        this.radius = this.radius/2;
+    }
 
     public List<Point> getPoints(){
         return this.points;

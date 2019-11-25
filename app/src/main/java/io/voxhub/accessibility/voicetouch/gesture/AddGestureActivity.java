@@ -76,12 +76,8 @@ public class AddGestureActivity extends Activity {
         Bundle extras = getIntent().getExtras();
         String source = extras.getString("source");
 
-        if(backgroundPic != null){
-            ImageView image = (ImageView) findViewById(R.id.background_pic);
-            image.setImageBitmap(backgroundPic);
-        }
-
-
+        ImageView image = (ImageView) findViewById(R.id.background_pic);
+        image.setImageBitmap(backgroundPic);
 
         //Start a thread that will keep count of the time
         final Thread t = new Thread("Listen for touch thread") {
@@ -99,9 +95,8 @@ public class AddGestureActivity extends Activity {
                         mProgressBar.setProgress((int)delay/1000*100/(3000/1000));
                         //If our delay in MS is over 10,000
                         if (delay > 2000) {
-                            Bitmap screenShot = getScreenShot();
                             List<Point> list = fl.getPoints();
-                            saveCurrentGesture(list, screenShot, backgroundPic);
+                            saveCurrentGesture(list, backgroundPic);
                             backgroundPic = null;
                             return;
                         }
@@ -115,7 +110,7 @@ public class AddGestureActivity extends Activity {
 
         if(source.equals("GestureSettingActivity")){
             String points = extras.getString("points");
-            fl.points = convertStrToPointlist(points);
+            fl.points = PointsSerializer.convertStrToPointlist(points);
             gestureName = extras.getString("name");
             waitState = false;
             t.start();
@@ -147,21 +142,15 @@ public class AddGestureActivity extends Activity {
 
 
 
-
-
-
-
-
     }
 
 
-    private void saveCurrentGesture(List<Point> points, Bitmap screenshot, Bitmap backgroundPic){
+    private void saveCurrentGesture(List<Point> points, Bitmap backgroundPic){
         //pass the points back
         Intent intent = new Intent(this, GestureSettingActivity.class);
         intent.putExtra("source","AddGesture");
-        GestureSettingActivity.setScreenShotImage(screenshot);
         GestureSettingActivity.setBackgroundImage(backgroundPic);
-        intent.putExtra("points", convertPointlistToStr(points));
+        intent.putExtra("points", PointsSerializer.convertPointlistToStr(points));
         if(gestureName != null){
             intent.putExtra("name", gestureName);
         }
@@ -169,62 +158,8 @@ public class AddGestureActivity extends Activity {
     }
 
 
-    private List<Point> convertStrToPointlist(String str){
-        //convert json array string to list of points
-        List<Point> list = new ArrayList<Point>();
-        try {
-            JSONArray jsonArray = new JSONArray(str);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject explrObject = jsonArray.getJSONObject(i);
-                list.add(new Point(Float.valueOf(String.valueOf(explrObject.get("x"))), Float.valueOf(String.valueOf(explrObject.get("y")))) );
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        Log.i("json", String.valueOf(list.size()) );
-
-        return list;
-    }
 
 
-    private String convertPointlistToStr(List<Point> points)  {
-
-        //convert list of points to json array string
-        JSONArray jsonArray = new JSONArray();
-        try {
-            for (Point p : points) {
-                JSONObject pointJson = new JSONObject();
-                pointJson.put("x", String.valueOf(p.x));
-                pointJson.put("y", String.valueOf(p.y));
-                jsonArray.put(pointJson);
-            }
-
-        }catch(JSONException e){
-            Log.d("json", "fail to convert point list to str");
-            return null;
-        }
-        return jsonArray.toString();
-
-    }
-
-
-    private Bitmap getScreenShot(View view) {
-        mProgressBar.setVisibility(View.INVISIBLE);
-        View screenView = view.getRootView();
-        screenView.setDrawingCacheEnabled(true);
-        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache());
-        screenView.setDrawingCacheEnabled(false);
-        return bitmap;
-    }
-
-
-
-    private Bitmap getScreenShot(){
-        View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
-        Bitmap bm = getScreenShot(rootView);
-        return bm;
-    }
 
 
     public static void setBackgroundPic(Bitmap bm){

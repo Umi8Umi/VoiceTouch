@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:orientation="vertical"
+<LinearLayout android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <LinearLayout
@@ -22,17 +22,47 @@
             </EditText>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/gesture_thumbnail_canvas"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:orientation="horizontal"
-            android:layout_weight="1"
-            android:gravity="center">
-            <ImageView
-                android:id="@+id/gesture_img"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            android:layout_gravity="center">
 
-                />
+            <FrameLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                >
+                <FrameLayout
+
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+                    <ImageView
+                        android:id="@+id/thumbnail_background_pic"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        >
+                    </ImageView>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                    <io.voxhub.accessibility.voicetouch.gesture.FingerLine
+                        android:id="@+id/gesture_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/semi_black" />
+
+                </FrameLayout>
+
+
+            </FrameLayout>
+
+
+
         </LinearLayout>
 
     </LinearLayout>
@@ -56,7 +86,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="resetBackGroundImg"
+            android:onClick="clearBackGroundImg"
             android:text="Clear&#10;Img" />
 
         <Button
