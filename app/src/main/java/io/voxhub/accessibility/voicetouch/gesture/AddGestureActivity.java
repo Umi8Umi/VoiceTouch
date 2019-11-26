@@ -69,6 +69,7 @@ public class AddGestureActivity extends Activity {
         mProgressBar=(ProgressBar)findViewById(R.id.progressbar);
         mProgressBar.setProgress(0);
 
+
         //Check for touches on our main layout
         fl = (FingerLine) findViewById(R.id.finger_line);
 
@@ -114,6 +115,9 @@ public class AddGestureActivity extends Activity {
             gestureName = extras.getString("name");
             waitState = false;
             t.start();
+            mProgressBar.setVisibility(View.VISIBLE);
+        }else{
+            mProgressBar.setVisibility(View.INVISIBLE);
         }
 
 

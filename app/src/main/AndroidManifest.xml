@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools" > 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.REORDER_TASKS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <application
@@ -51,7 +52,6 @@
         
         <activity android:name="io.voxhub.accessibility.voicetouch.gesture.GestureListActivity"
             android:parentActivityName="io.voxhub.accessibility.voicetouch.SimpleActivity">
-
         </activity>
 
         <activity android:name="io.voxhub.accessibility.voicetouch.gesture.AddGestureActivity"
