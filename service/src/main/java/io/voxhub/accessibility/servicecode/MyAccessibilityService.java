@@ -12,6 +12,13 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class MyAccessibilityService extends AccessibilityService {
     public MyAccessibilityService() {
         Log.i("accessibilityservice", "constructor");
@@ -32,6 +39,18 @@ public class MyAccessibilityService extends AccessibilityService {
         Log.d("accessibilityservice", "split event text ["
             + text + "] -> [" + text.split(":")[0] + "]");
         return text.split(":")[0];
+    }
+
+    private String getGestureFromEvent(AccessibilityEvent event) {
+        StringBuilder sb = new StringBuilder();
+        for (CharSequence ch : event.getText()) {
+            sb.append(ch.toString());
+        }
+
+        String text = sb.toString();
+        Log.d("accessibilityservice", "split event gesture ["
+                + text + "] -> [" + text.split(":")[1] + "]");
+        return text.split(":")[1];
     }
 
     private enum GestureType {
@@ -109,6 +128,7 @@ public class MyAccessibilityService extends AccessibilityService {
                 path, 0, GESTURE_DURATION_slow));
             Log.i("accessibilityservice", "gesture: tap left side");
             break;
+
         default:
             Log.i("accessibilityservice", "gesture: unsupported gesture");
             return;
@@ -154,11 +174,78 @@ public class MyAccessibilityService extends AccessibilityService {
             else if(text.equals("center")) {
                 doGesture(GestureType.GESTURE_TAP_CENTER);
             }
+            else if(text.equals("customization")){
+                //this deals with customized gesture
+                Log.i("accessibilityservice", "start customized gesture");
+                String gesturePoints = getGestureFromEvent(event);
+                List<Point> pointList = convertStrToPointlist(gesturePoints);
+                doCustomizedGesture(pointList);
+            }else{
+                Log.i("accessibilityservice", "fail to identify gesture");
+            }
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void doCustomizedGesture(List<Point> pointList) {
+        Log.i("customized gesture","start");
+        final int GESTURE_DURATION = 10;
+        GestureDescription.Builder gestureBuilder = new GestureDescription.Builder();
+        Path path = new Path();
+        if(pointList.size() == 0)
+            return;
+
+        Point firstPoint = pointList.get(0);
+        path.moveTo(firstPoint.x, firstPoint.y);
+
+        for(int i=1;i<pointList.size();i++){
+            Point nextPoint = pointList.get(i);
+            path.lineTo(nextPoint.x, nextPoint.y);
+        }
+        gestureBuilder.addStroke(new GestureDescription.StrokeDescription(
+                path, 0, GESTURE_DURATION));
+
+        Log.i("accessibilityservice", "gesture: customized gesture");
+
+        dispatchGesture(gestureBuilder.build(), new GestureResultCallback() {
+            @Override
+            public void onCompleted(GestureDescription gestureDescription) {
+                Log.d("accessibilityservice", "gesture completed");
+                super.onCompleted(gestureDescription);
+            }
+        }, null);
+
     }
     @Override
     public void onInterrupt() {
     
+    }
+
+    class Point{
+        float x;
+        float y;
+
+        public Point(float x, float y){
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    public List<Point> convertStrToPointlist(String str){
+        //convert json array string to list of points
+        List<Point> list = new ArrayList<Point>();
+        try {
+            JSONArray jsonArray = new JSONArray(str);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject explrObject = jsonArray.getJSONObject(i);
+                list.add(new Point(Float.valueOf(String.valueOf(explrObject.get("x"))), Float.valueOf(String.valueOf(explrObject.get("y")))) );
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return list;
     }
 }
 

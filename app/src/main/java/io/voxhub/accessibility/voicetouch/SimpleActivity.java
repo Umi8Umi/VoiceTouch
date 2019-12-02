@@ -1,4 +1,5 @@
 package io.voxhub.accessibility.voicetouch;
+import io.voxhub.accessibility.voicetouch.command.CommandListActivity;
 import io.voxhub.accessibility.voicetouch.gesture.GestureListActivity;
 import jp.naist.ahclab.speechkit.logs.MyLog;
 
@@ -91,6 +92,7 @@ public class SimpleActivity extends Activity {
     private Button btn_overlay;
     private Button btn_about;
     private Button btn_gesture;
+    private Button btn_command;
    // private Button btn_help;
     private ImageButton btn_help;
     private ProgressBar progress;
@@ -338,6 +340,7 @@ public class SimpleActivity extends Activity {
         executer = new Executer(this);
         executer.constructMap();
 
+
         //installed-app-list
         //mContext = getApplicationContext();
         //mActivity = SimpleActivity.this;
@@ -358,6 +361,7 @@ public class SimpleActivity extends Activity {
         btn_overlay = (Button) this.findViewById(R.id.btn_overlay); 
         btn_about = (Button) this.findViewById(R.id.btn_about);
         btn_gesture = (Button) this.findViewById(R.id.btn_gesture);
+        btn_command = (Button) this.findViewById(R.id.btn_command);
         btn_help = (ImageButton) this.findViewById(R.id.btn_help);
         progress = (ProgressBar)findViewById(R.id.progress_listening);
         ed_result = (EditText)findViewById(R.id.ed_result);
@@ -451,15 +455,23 @@ public class SimpleActivity extends Activity {
 
         btn_gesture.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { // Open about page
+            public void onClick(View v) { // Open gesture page
                 Intent intent = new Intent(SimpleActivity.this, GestureListActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_command.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { // Open command page
+                Intent intent = new Intent(SimpleActivity.this, CommandListActivity.class);
                 startActivity(intent);
             }
         });
 
         btn_help.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { // Open about page
+            public void onClick(View v) { // Open help page
                 Intent intent = new Intent(SimpleActivity.this, HelpActivity.class);
                 startActivity(intent);
             }

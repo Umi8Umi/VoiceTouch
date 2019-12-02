@@ -1,4 +1,4 @@
-package io.voxhub.accessibility.voicetouch.gesture;
+package io.voxhub.accessibility.voicetouch.command;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -12,23 +12,22 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import io.voxhub.accessibility.voicetouch.R;
-import io.voxhub.accessibility.voicetouch.database.GestureDataDbHelper;
+import io.voxhub.accessibility.voicetouch.database.VoiceTouchDbHelper;
 
-public class MyCustomAdapter extends BaseAdapter implements ListAdapter {
+public class CommandAdapter  extends BaseAdapter implements ListAdapter {
     private List<String> list = new ArrayList<String>();
     private Context context;
-    private GestureDataDbHelper db;
+    private VoiceTouchDbHelper db;
 
 
-    public MyCustomAdapter(List<String> list, Context context) {
+    public CommandAdapter(List<String> list, Context context) {
         this.list = list;
         this.context = context;
-        db = new GestureDataDbHelper(context);
+        db = new VoiceTouchDbHelper(context);
     }
 
     @Override
@@ -65,7 +64,7 @@ public class MyCustomAdapter extends BaseAdapter implements ListAdapter {
 
 
         //Handle buttons and add onClickListeners
-        Button deleteBtn = (Button)view.findViewById(R.id.delete_gesture);
+        Button deleteBtn = (Button)view.findViewById(R.id.delete_list_item);
 
 
 
@@ -75,19 +74,19 @@ public class MyCustomAdapter extends BaseAdapter implements ListAdapter {
                 //show dialog
 
                 new AlertDialog.Builder(context)
-                        .setTitle("Delete gesture '"+list.get(position)+"'")
-                        .setMessage("Are you sure you want to delete this gesture and its related data?")
+                        .setTitle("Delete command '"+list.get(position)+"'")
+                        .setMessage("Are you sure you want to delete this command and its related data?")
 
                         // Specifying a listener allows you to take an action before dismissing the dialog.
                         // The dialog is automatically dismissed when a dialog button is clicked.
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 // Continue with delete operation
-                                String gestureName = list.get(position);
+                                String commandName = list.get(position);
                                 try {
-                                    db.deleteGesture(gestureName);
+                                    db.deleteCommand(commandName);
                                 } catch (Exception e) {
-                                    Log.d("db","fail to delete gesture:"+gestureName);
+                                    Log.d("db","fail to delete command:"+commandName);
                                 }
 
                                 list.remove(position); //or some other task

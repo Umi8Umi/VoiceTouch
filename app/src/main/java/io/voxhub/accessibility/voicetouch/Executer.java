@@ -1,4 +1,6 @@
 package io.voxhub.accessibility.voicetouch;
+import io.voxhub.accessibility.voicetouch.database.CommandData;
+import io.voxhub.accessibility.voicetouch.database.VoiceTouchDbHelper;
 import jp.naist.ahclab.speechkit.logs.MyLog;
 
 import android.app.Activity;
@@ -25,10 +27,12 @@ public class Executer{
     private LinkedList<Command> commandList = new LinkedList<Command>();
     private HashMap<String, Command> commandsMap = new HashMap<String, Command>();
     private boolean isRunningOne = false;
+    private VoiceTouchDbHelper db;
     
     public Executer (SimpleActivity s) {
         simpleActivity = s;
         manager = (AccessibilityManager)s.getSystemService(Context.ACCESSIBILITY_SERVICE);
+        db = new VoiceTouchDbHelper(s);
     }
 
     public void sendAccessibilityEvent(String string) {
@@ -40,7 +44,31 @@ public class Executer{
         event.getText().clear();
         event.getText().add(string);
         event.getText().add(":");
-        //MyLog.i("SimpleActivity event: " + event.toString());
+
+//        MyLog.i("SimpleActivity event: " + event.toString());
+        if(simpleActivity.dispatchPopulateAccessibilityEvent(event)) {
+            MyLog.i("SimpleActivity dispatchPopulateAccessibilityEvent says OK");
+        }
+        else {
+            MyLog.i("SimpleActivity dispatchPopulateAccessibilityEvent says ???");
+        }
+        manager.sendAccessibilityEvent(event);
+        MyLog.i("SimpleActivity sent accessibility event");
+    }
+
+    public void sendAccessibilityEvent(String string, String gesturePoints) {
+        AccessibilityEvent event = AccessibilityEvent.obtain(AccessibilityEvent
+                .TYPE_ANNOUNCEMENT);
+        event.setClassName(getClass().getName());
+        event.setPackageName(simpleActivity.getPackageName());
+        event.setEnabled(true);
+        event.getText().clear();
+        event.getText().add(string);
+        event.getText().add(":");
+        event.getText().add(gesturePoints);
+        event.getText().add(":");
+
+
         if(simpleActivity.dispatchPopulateAccessibilityEvent(event)) {
             MyLog.i("SimpleActivity dispatchPopulateAccessibilityEvent says OK");
         }
@@ -127,6 +155,19 @@ public class Executer{
                                                     bringApplicationToForeground();
                                                     MyLog.i("SimpleActivity sent background");
                                                 } });
+
+        //get all commands and related gestures from db
+        List<String> commandList = db.getAllCommandNames();
+        for(String command: commandList){
+            CommandData commandData = db.getCommand(command);
+            String callname = commandData.getAlias();
+            String[] gestures = commandData.getGestureArray();
+            commandsMap.put(callname,        new CustomizedCommand(gestures));
+            Log.i("register command",callname);
+        }
+
+
+
     }
 
     private void runOne() {
@@ -198,6 +239,35 @@ public class Executer{
             MyLog.i("SimpleActivity spotted " + action);
             sendAccessibilityEvent(action);
             MyLog.i("SimpleActivity sent " + action);
+        }
+    }
+
+
+    class CustomizedCommand extends Command {
+        private String[] gestureList;
+
+        CustomizedCommand (String[] list) {
+            gestureList = list;
+        }
+
+        public String actionListToStr(String[] list){
+            String result = "";
+            for(String action: list){
+                result = result + action + ",";
+            }
+            return result;
+        }
+
+        public void run() {
+            MyLog.i("Customized command got called");
+            MyLog.i("SimpleActivity spotted action list:" + actionListToStr(gestureList));
+            for(String gesture: gestureList ){
+                //search gesture points
+                String gesturePoints = db.getGesturePoints(gesture);
+                sendAccessibilityEvent("customization", gesturePoints);
+                MyLog.i("SimpleActivity sent gesture:" + gesture);
+                MyLog.i("SimpleActivity sent gesture points:" + gesturePoints);
+            }
         }
     }
 }

@@ -6,9 +6,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import io.voxhub.accessibility.voicetouch.gesture.Point;
 
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,7 +22,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,19 +29,21 @@ import java.util.List;
 
 import io.voxhub.accessibility.voicetouch.R;
 import io.voxhub.accessibility.voicetouch.database.GestureData;
-import io.voxhub.accessibility.voicetouch.database.GestureDataDbHelper;
+import io.voxhub.accessibility.voicetouch.database.VoiceTouchDbHelper;
 
 public class GestureSettingActivity extends Activity {
 
 
     private Dialog viewGestureDialog;
-    private GestureDataDbHelper db;
+    private VoiceTouchDbHelper db;
 
-    String currentPoints;
-    String currentName;
+    private String currentPoints;
+    private String currentName;
     private static Bitmap currentBackground;
 
     private static final int GET_FROM_GALLERY = 1;
+
+
 
 
 
@@ -70,7 +69,7 @@ public class GestureSettingActivity extends Activity {
         thumbnailView.getLayoutParams().height = height/2;
 
 
-        db = new GestureDataDbHelper(this);
+        db = new VoiceTouchDbHelper(this);
 
         Bundle extras = getIntent().getExtras();
         String source = extras.getString("source");
@@ -178,7 +177,7 @@ public class GestureSettingActivity extends Activity {
 
 
         //check if the name exists first
-        boolean isExist = db.isExist(currentName);
+        boolean isExist = db.isGestureExist(currentName);
 
 
         if(isExist){

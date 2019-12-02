@@ -12,6 +12,7 @@
     <string name="txt_btn_enable">Enable Accessibility Service</string>
     <string name="txt_btn_about">About</string>
     <string name="txt_btn_gesture">Gesture</string>
+    <string name="txt_btn_command">Command</string>
     <string name="txt_btn_reset">Reset</string>
     <string name="about_title">ABOUT</string>
     <string name="contributors">Contributors</string>
@@ -23,7 +24,7 @@
     <string name="faq">FAQ</string>
     <string name="txt_btn_help">Help</string>
     <string name="installedApps">Installed Applications</string>
-   
+
 
     <string name="setting_lang_title">Choose language</string>
 
@@ -39,7 +40,7 @@
     <string name="default_server_app_speech">/dev/duplex-speech-api/ws/speech</string>
   -->
 
-    <!-- SettingsActivity.java has hardcoded silvius-server.voxhub.io server and port --> 
+    <!-- SettingsActivity.java has hardcoded silvius-server.voxhub.io server and port -->
     <string name="default_server_addr">silvius-server.voxhub.io</string>
     <string name="default_server_port">8022</string>
     <string name="default_server_app_status">client/ws/status</string>
@@ -58,4 +59,7 @@
     <string name="no">No</string>
     <color name="black">#000000</color>
     <color name="semi_black">#99000000</color>
+
+
+    <string name="add_command">Add a command</string>
 </resources>
