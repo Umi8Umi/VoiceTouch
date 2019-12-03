@@ -16,8 +16,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity
-            android:name=".command.CommandListActivity"
-            android:parentActivityName=".SimpleActivity">
+            android:name=".command.CommandListActivity">
 
         </activity>
 

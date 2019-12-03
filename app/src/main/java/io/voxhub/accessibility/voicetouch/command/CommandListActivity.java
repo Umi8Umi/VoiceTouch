@@ -10,6 +10,7 @@ import android.widget.ListView;
 import java.util.List;
 
 import io.voxhub.accessibility.voicetouch.R;
+import io.voxhub.accessibility.voicetouch.SimpleActivity;
 import io.voxhub.accessibility.voicetouch.database.VoiceTouchDbHelper;
 import io.voxhub.accessibility.voicetouch.gesture.GestureAdapter;
 import io.voxhub.accessibility.voicetouch.gesture.GestureListActivity;
@@ -58,6 +59,11 @@ public class CommandListActivity extends Activity {
         Intent intent = new Intent(this, CommandSettingActivity.class);
         intent.putExtra("source","null");
         //pass the command name
+        startActivity(intent);
+    }
+
+    public void jumpToSimpleActivity(View view){
+        Intent intent = new Intent(this, SimpleActivity.class);
         startActivity(intent);
     }
 }

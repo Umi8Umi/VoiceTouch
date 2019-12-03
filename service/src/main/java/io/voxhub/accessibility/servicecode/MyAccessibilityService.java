@@ -37,8 +37,8 @@ public class MyAccessibilityService extends AccessibilityService {
 
         String text = sb.toString();
         Log.d("accessibilityservice", "split event text ["
-            + text + "] -> [" + text.split(":")[0] + "]");
-        return text.split(":")[0];
+            + text + "] -> [" + text.split(";")[0] + "]");
+        return text.split(";")[0];
     }
 
     private String getGestureFromEvent(AccessibilityEvent event) {
@@ -49,8 +49,8 @@ public class MyAccessibilityService extends AccessibilityService {
 
         String text = sb.toString();
         Log.d("accessibilityservice", "split event gesture ["
-                + text + "] -> [" + text.split(":")[1] + "]");
-        return text.split(":")[1];
+                + text + "] -> [" + text.split(";")[1] + "]");
+        return text.split(";")[1];
     }
 
     private enum GestureType {
@@ -176,8 +176,10 @@ public class MyAccessibilityService extends AccessibilityService {
             }
             else if(text.equals("customization")){
                 //this deals with customized gesture
+                Log.i("customized gesture movemment2","now");
                 Log.i("accessibilityservice", "start customized gesture");
                 String gesturePoints = getGestureFromEvent(event);
+                Log.i("accessibilityservice", "get points to draw:"+gesturePoints);
                 List<Point> pointList = convertStrToPointlist(gesturePoints);
                 doCustomizedGesture(pointList);
             }else{
@@ -188,7 +190,7 @@ public class MyAccessibilityService extends AccessibilityService {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void doCustomizedGesture(List<Point> pointList) {
-        Log.i("customized gesture","start");
+        Log.i("customized gesture movemment","now");
         final int GESTURE_DURATION = 10;
         GestureDescription.Builder gestureBuilder = new GestureDescription.Builder();
         Path path = new Path();
@@ -215,6 +217,7 @@ public class MyAccessibilityService extends AccessibilityService {
             }
         }, null);
 
+
     }
     @Override
     public void onInterrupt() {
@@ -238,7 +241,8 @@ public class MyAccessibilityService extends AccessibilityService {
             JSONArray jsonArray = new JSONArray(str);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject explrObject = jsonArray.getJSONObject(i);
-                list.add(new Point(Float.valueOf(String.valueOf(explrObject.get("x"))), Float.valueOf(String.valueOf(explrObject.get("y")))) );
+                if(Float.valueOf(String.valueOf(explrObject.get("x"))) >= 0 && Float.valueOf(String.valueOf(explrObject.get("y"))) >= 0)
+                    list.add(new Point(Float.valueOf(String.valueOf(explrObject.get("x"))), Float.valueOf(String.valueOf(explrObject.get("y")))) );
             }
         } catch (JSONException e) {
             e.printStackTrace();

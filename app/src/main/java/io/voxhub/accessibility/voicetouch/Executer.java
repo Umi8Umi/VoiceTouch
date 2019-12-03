@@ -3,17 +3,15 @@ import io.voxhub.accessibility.voicetouch.database.CommandData;
 import io.voxhub.accessibility.voicetouch.database.VoiceTouchDbHelper;
 import jp.naist.ahclab.speechkit.logs.MyLog;
 
-import android.app.Activity;
+
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
-import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +41,7 @@ public class Executer{
         event.setEnabled(true);
         event.getText().clear();
         event.getText().add(string);
-        event.getText().add(":");
+        event.getText().add(";");
 
 //        MyLog.i("SimpleActivity event: " + event.toString());
         if(simpleActivity.dispatchPopulateAccessibilityEvent(event)) {
@@ -64,9 +62,9 @@ public class Executer{
         event.setEnabled(true);
         event.getText().clear();
         event.getText().add(string);
-        event.getText().add(":");
+        event.getText().add(";");
         event.getText().add(gesturePoints);
-        event.getText().add(":");
+        event.getText().add(";");
 
 
         if(simpleActivity.dispatchPopulateAccessibilityEvent(event)) {
@@ -260,13 +258,15 @@ public class Executer{
 
         public void run() {
             MyLog.i("Customized command got called");
-            MyLog.i("SimpleActivity spotted action list:" + actionListToStr(gestureList));
+
             for(String gesture: gestureList ){
                 //search gesture points
+                MyLog.i("SimpleActivity spotted action :" + gesture);
                 String gesturePoints = db.getGesturePoints(gesture);
                 sendAccessibilityEvent("customization", gesturePoints);
                 MyLog.i("SimpleActivity sent gesture:" + gesture);
                 MyLog.i("SimpleActivity sent gesture points:" + gesturePoints);
+
             }
         }
     }

@@ -10,15 +10,33 @@
         android:layout_height="0dip"
         android:layout_weight="1"
         android:id="@+id/command_list"
-        android:focusable="false"/>
+        android:focusable="false"
+        />
 
-    <Button
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:text="@string/add_command"
-        android:onClick="jumpToAddCommand"
-        />
+        android:layout_gravity="bottom"
+        android:layout_weight="0">
+
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/add_command"
+            android:onClick="jumpToAddCommand"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/txt_btn_back"
+            android:onClick="jumpToSimpleActivity"/>
+
+    </LinearLayout>
 
 
 </LinearLayout>
