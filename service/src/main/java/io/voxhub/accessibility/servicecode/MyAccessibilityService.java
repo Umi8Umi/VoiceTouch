@@ -19,6 +19,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
 public class MyAccessibilityService extends AccessibilityService {
     public MyAccessibilityService() {
         Log.i("accessibilityservice", "constructor");
@@ -176,7 +178,7 @@ public class MyAccessibilityService extends AccessibilityService {
             }
             else if(text.equals("customization")){
                 //this deals with customized gesture
-                Log.i("customized gesture movemment2","now");
+
                 Log.i("accessibilityservice", "start customized gesture");
                 String gesturePoints = getGestureFromEvent(event);
                 Log.i("accessibilityservice", "get points to draw:"+gesturePoints);
@@ -190,7 +192,7 @@ public class MyAccessibilityService extends AccessibilityService {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void doCustomizedGesture(List<Point> pointList) {
-        Log.i("customized gesture movemment","now");
+
         final int GESTURE_DURATION = 10;
         GestureDescription.Builder gestureBuilder = new GestureDescription.Builder();
         Path path = new Path();
@@ -207,7 +209,6 @@ public class MyAccessibilityService extends AccessibilityService {
         gestureBuilder.addStroke(new GestureDescription.StrokeDescription(
                 path, 0, GESTURE_DURATION));
 
-        Log.i("accessibilityservice", "gesture: customized gesture");
 
         dispatchGesture(gestureBuilder.build(), new GestureResultCallback() {
             @Override
@@ -217,6 +218,11 @@ public class MyAccessibilityService extends AccessibilityService {
             }
         }, null);
 
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
     @Override

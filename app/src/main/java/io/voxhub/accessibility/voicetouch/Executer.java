@@ -266,7 +266,11 @@ public class Executer{
                 sendAccessibilityEvent("customization", gesturePoints);
                 MyLog.i("SimpleActivity sent gesture:" + gesture);
                 MyLog.i("SimpleActivity sent gesture points:" + gesturePoints);
-
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
