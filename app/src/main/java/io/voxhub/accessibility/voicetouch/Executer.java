@@ -210,9 +210,18 @@ public class Executer{
                 MyLog.i("found command: " + sb.toString());
                 c = commandsMap.get(sb.toString());
                 if (!c.isInstant()){
-                    commandList.add(c);
-                    MyLog.i("commandList size: " + commandList.size());}
-                else c.run();
+                    if(c.isCombo()){
+                        CustomizedCommand combo = (CustomizedCommand)c;
+                        combo.addAllCommandsToList();
+                    }else {
+                        commandList.add(c);
+                    }
+                    MyLog.i("commandList size: " + commandList.size());
+                } else{
+                    c.run();
+                }
+
+
                 sb.delete(0,sb.length());
             }
         }
@@ -224,6 +233,7 @@ public class Executer{
     abstract class Command implements Runnable {
         public abstract void run();
         public boolean isInstant() {return false;}
+        public boolean isCombo() {return false;}
     }
 
     class AccessibilityCommand extends Command {
@@ -242,36 +252,54 @@ public class Executer{
 
 
     class CustomizedCommand extends Command {
-        private String[] gestureList;
+        private List<SingleGestureCommand> list;
 
-        CustomizedCommand (String[] list) {
-            gestureList = list;
-        }
-
-        public String actionListToStr(String[] list){
-            String result = "";
-            for(String action: list){
-                result = result + action + ",";
-            }
-            return result;
-        }
-
-        public void run() {
-            MyLog.i("Customized command got called");
-
-            for(String gesture: gestureList ){
-                //search gesture points
-                MyLog.i("SimpleActivity spotted action :" + gesture);
+        CustomizedCommand (String[] gestureList) {
+            this.list = new ArrayList<SingleGestureCommand>();
+            for(String gesture: gestureList){
                 String gesturePoints = db.getGesturePoints(gesture);
-                sendAccessibilityEvent("customization", gesturePoints);
-                MyLog.i("SimpleActivity sent gesture:" + gesture);
-                MyLog.i("SimpleActivity sent gesture points:" + gesturePoints);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                this.list.add(new SingleGestureCommand(gesture, gesturePoints));
             }
+
+        }
+
+
+        public void addAllCommandsToList() {
+            MyLog.i("Customized command got called");
+            for(SingleGestureCommand command: list){
+                commandList.add(command);
+            }
+        }
+
+        @Override
+        public void run() {
+            MyLog.i("This is combo command, this command should not be ran");
+        }
+
+        @Override
+        public boolean isCombo() {
+            return true;
+        }
+    }
+
+
+    class SingleGestureCommand extends Command {
+
+        private String name;
+        private String points;
+
+        public SingleGestureCommand(String n, String p){
+            name = n;
+            points = p;
+        }
+
+        @Override
+        public void run() {
+            MyLog.i("SimpleActivity spotted gesture :" + name);
+
+            sendAccessibilityEvent("customization", points);
+            MyLog.i("SimpleActivity sent gesture:" + name);
+            MyLog.i("SimpleActivity sent gesture points:" + points);
         }
     }
 }

@@ -62,8 +62,4 @@ public class CommandListActivity extends Activity {
         startActivity(intent);
     }
 
-    public void jumpToSimpleActivity(View view){
-        Intent intent = new Intent(this, SimpleActivity.class);
-        startActivity(intent);
-    }
 }

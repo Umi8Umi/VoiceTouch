@@ -120,7 +120,9 @@ public class SimpleActivity extends Activity {
     }
 
     void make_speechkit() {
-        if (!makeServerInfo()) return;
+        if (!makeServerInfo() && _currentRecognizer != null){
+            return;
+        }
         
         destroy_speechkit();
         requestMicPermissions();
@@ -365,11 +367,11 @@ public class SimpleActivity extends Activity {
         btn_help = (ImageButton) this.findViewById(R.id.btn_help);
         progress = (ProgressBar)findViewById(R.id.progress_listening);
         ed_result = (EditText)findViewById(R.id.ed_result);
-        
+
+
         if(_currentRecognizer == null || makeServerInfo()) {
             make_speechkit();
-        }
-        else {
+        } else {
             init_speechkit(serverInfo);
             // inherit old audio thread
             if(_currentRecognizer.isRecording()) {

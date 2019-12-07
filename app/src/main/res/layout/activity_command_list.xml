@@ -29,12 +29,6 @@
             android:text="@string/add_command"
             android:onClick="jumpToAddCommand"/>
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/txt_btn_back"
-            android:onClick="jumpToSimpleActivity"/>
 
     </LinearLayout>
 
