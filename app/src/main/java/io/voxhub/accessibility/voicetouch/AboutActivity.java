@@ -34,7 +34,7 @@ public class AboutActivity extends Activity {
         bodyC = (TextView) findViewById(R.id.contributors_body);
         
         bodyT.setText("Use speech recognition to turn pages hands-free in ebook reader apps. Commands like \"next page\" and \"previous page\" generate taps on the edges of the screen. Verified to work with Amazon Kindle and Rakuten Kobo ereader apps. Speech recognition requires an internet connection.\n\n");
-        bodyC.setText("Serena Tam, Sarah Leventhal, David Williams-King.\n\n");
+        bodyC.setText("Kang Sun, Sarah Leventhal, Serena Tam, David Williams-King.\n\n");
         
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override

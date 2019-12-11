@@ -11,8 +11,8 @@
     <string name="txt_hoverText">Hover Text</string>
     <string name="txt_btn_enable">Enable Accessibility Service</string>
     <string name="txt_btn_about">About</string>
-    <string name="txt_btn_gesture">Gesture</string>
-    <string name="txt_btn_command">Command</string>
+    <string name="txt_btn_gesture">Gestures</string>
+    <string name="txt_btn_command">Commands</string>
     <string name="txt_btn_reset">Reset</string>
     <string name="about_title">ABOUT</string>
     <string name="contributors">Contributors</string>

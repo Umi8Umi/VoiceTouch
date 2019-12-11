@@ -90,7 +90,7 @@ public class SimpleActivity extends Activity {
     private Button btn_stop;
     private Button btn_enable;
     private Button btn_overlay;
-    private Button btn_about;
+//    private Button btn_about;
     private Button btn_gesture;
     private Button btn_command;
    // private Button btn_help;
@@ -361,7 +361,7 @@ public class SimpleActivity extends Activity {
         btn_stop = (Button) this.findViewById(R.id.btn_stop);
         btn_enable = (Button) this.findViewById(R.id.btn_enable);
         btn_overlay = (Button) this.findViewById(R.id.btn_overlay); 
-        btn_about = (Button) this.findViewById(R.id.btn_about);
+//        btn_about = (Button) this.findViewById(R.id.btn_about);
         btn_gesture = (Button) this.findViewById(R.id.btn_gesture);
         btn_command = (Button) this.findViewById(R.id.btn_command);
         btn_help = (ImageButton) this.findViewById(R.id.btn_help);
@@ -447,13 +447,13 @@ public class SimpleActivity extends Activity {
             }
         });
 
-        btn_about.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { // Open about page
-                Intent intent = new Intent(SimpleActivity.this, AboutActivity.class);
-                startActivity(intent);
-            }
-        });
+//        btn_about.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) { // Open about page
+//                Intent intent = new Intent(SimpleActivity.this, AboutActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
         btn_gesture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -474,7 +474,9 @@ public class SimpleActivity extends Activity {
         btn_help.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { // Open help page
-                Intent intent = new Intent(SimpleActivity.this, HelpActivity.class);
+//                Intent intent = new Intent(SimpleActivity.this, HelpActivity.class);
+//                startActivity(intent);
+                Intent intent = new Intent(SimpleActivity.this, AboutActivity.class);
                 startActivity(intent);
             }
         });

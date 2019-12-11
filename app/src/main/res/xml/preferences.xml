@@ -46,7 +46,7 @@
     </PreferenceScreen>
 
     <PreferenceScreen
-        app:title="Commands">
+        app:title="Built-in Commands">
 
         <PreferenceCategory
             app:title="general">
@@ -93,6 +93,17 @@
                 app:summary="simulates a click to the menu button">
             </Preference>
 
+            <Preference
+                app:key="create gesture"
+                app:title="Create Gesture"
+                app:summary="opens gesture drawing page">
+            </Preference>
+
+            <Preference
+                app:key="create command"
+                app:title="Create Command"
+                app:summary="opens command creation page">
+            </Preference>
         </PreferenceCategory>
 
     </PreferenceScreen>

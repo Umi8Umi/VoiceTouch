@@ -7,8 +7,8 @@ android {
         applicationId "io.voxhub.accessibility.voicetouch"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 1
-        versionName "0.1.0"
+        versionCode 3
+        versionName "0.1.2"
     }
     buildTypes {
         release {
