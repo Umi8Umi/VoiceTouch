@@ -1,4 +1,4 @@
-package io.voxhub.accessibility.servicecode;
+package io.voxhub.accessibility.voicetouch.servicecode;
 //package com.example.android.apis.accessibility;
 
 import android.accessibilityservice.AccessibilityService;

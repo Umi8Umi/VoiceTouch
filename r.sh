@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ./gradlew assembleDebug
-adb uninstall io.voxhub.accessibility.servicecode
+adb uninstall io.voxhub.accessibility.voicetouch.servicecode
 sleep 1
 
 #adb install ./service/build/outputs/aar/service-debug.aar
@@ -14,4 +14,4 @@ sleep 1
 
 adb shell am start -n io.voxhub.accessibility.voicetouch/io.voxhub.accessibility.voicetouch.SimpleActivity
 
-# adb shell am start -n io.voxhub.accessibility.servicecode/io.voxhub.accessibility.servicecode.MyAccessibilityService
+# adb shell am start -n io.voxhub.accessibility.voicetouch.servicecode/io.voxhub.accessibility.voicetouch.servicecode.MyAccessibilityService
