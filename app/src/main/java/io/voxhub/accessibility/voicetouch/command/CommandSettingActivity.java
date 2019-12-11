@@ -13,6 +13,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.voxhub.accessibility.voicetouch.Constants;
 import io.voxhub.accessibility.voicetouch.R;
 import io.voxhub.accessibility.voicetouch.database.CommandData;
 import io.voxhub.accessibility.voicetouch.database.GestureData;
@@ -36,9 +37,9 @@ public class CommandSettingActivity extends Activity {
         //if displaying some exsiting command, just show it
 
         Bundle extras = getIntent().getExtras();
-        String source = extras.getString("source");
 
-        if(!source.equals("null")){
+
+        if(extras != null && extras.containsKey(Constants.SOURCE_STR) && !extras.getString(Constants.SOURCE_STR).equals("null")){
             String name = extras.getString("command_name");
             CommandData data = db.getCommand(name);
             EditText editText =  (EditText) findViewById(R.id.command_name);

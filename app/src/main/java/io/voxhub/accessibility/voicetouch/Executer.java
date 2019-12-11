@@ -1,5 +1,6 @@
 package io.voxhub.accessibility.voicetouch;
 import io.voxhub.accessibility.voicetouch.command.CommandListActivity;
+import io.voxhub.accessibility.voicetouch.command.CommandSettingActivity;
 import io.voxhub.accessibility.voicetouch.database.CommandData;
 import io.voxhub.accessibility.voicetouch.database.VoiceTouchDbHelper;
 import io.voxhub.accessibility.voicetouch.gesture.AddGestureActivity;
@@ -165,7 +166,7 @@ public class Executer{
                                                     MyLog.i("SimpleActivity sent background");
                                                 } });
 
-        commandsMap.put("page page", new Command(){
+        commandsMap.put("create gesture", new Command(){
             public void run() {
                 MyLog.i("SimpleActivity spotted " +
                         "create gesture");
@@ -189,6 +190,30 @@ public class Executer{
             public boolean isInstant() {return true;}
         });
 
+
+        commandsMap.put("create command", new Command(){
+            public void run() {
+                MyLog.i("SimpleActivity spotted " +
+                        "create command");
+
+//                simpleActivity.stopListening();
+
+                bringApplicationToForeground();
+
+                Intent j = new Intent(simpleActivity, CommandListActivity.class);
+                j.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                simpleActivity.startActivity(j);
+
+
+                Intent i = new Intent(simpleActivity, CommandSettingActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                simpleActivity.startActivity(i);
+
+                MyLog.i("SimpleActivity sent " +
+                        "create command");
+            }
+            public boolean isInstant() {return true;}
+        });
         //get all commands and related gestures from db
         List<String> commandList = db.getAllCommandNames();
         for(String command: commandList){

@@ -180,7 +180,7 @@ public class SimpleActivity extends Activity {
     public boolean makeServerInfo() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         String newserver = pref.getString("server", "silvius-server.voxhub.io");
-        int newport = Integer.parseInt(pref.getString("port", "8022"));
+        int newport = Integer.parseInt(pref.getString("port", "8023"));
         if (serverInfo == null 
             || !serverInfo.getAddr().equals(newserver)
             || serverInfo.getPort() != newport) {

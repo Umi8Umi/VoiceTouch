@@ -27,7 +27,7 @@
             android:layout_marginRight="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="\n\nPlease enter the call name of this command in the following:" />
+            android:text="\n\nPlease enter the spoken words that will trigger this command:" />
 
         <EditText
             android:id="@+id/command_callname"
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:inputType="text"
-            android:text="call name">
+            android:text="spoken words">
 
         </EditText>
 
