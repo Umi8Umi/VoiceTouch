@@ -651,6 +651,7 @@ public class SimpleActivity extends Activity {
                 MyLog.i("SimpleActivity restarted listening.");
             }
         }
+
     }
 
 }

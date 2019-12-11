@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,12 +20,12 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.voxhub.accessibility.voicetouch.Constants;
 import io.voxhub.accessibility.voicetouch.R;
 import io.voxhub.accessibility.voicetouch.database.GestureData;
 import io.voxhub.accessibility.voicetouch.database.VoiceTouchDbHelper;
@@ -72,10 +71,10 @@ public class GestureSettingActivity extends Activity {
         db = new VoiceTouchDbHelper(this);
 
         Bundle extras = getIntent().getExtras();
-        String source = extras.getString("source");
+        String source = extras.getString(Constants.SOURCE_STR);
 
         if(source.equals("GestureList")){
-            String name = extras.getString("gesture_name");
+            String name = extras.getString(Constants.GESTURE_NAME_STR);
 
             //search db to set the image and points
             GestureData data = db.getGesture(name);
@@ -84,9 +83,9 @@ public class GestureSettingActivity extends Activity {
             currentBackground = data.getBackground();
 
         }else if(source.equals("AddGesture")){
-            currentPoints = extras.getString("points");
-            if(extras.containsKey("name")){
-                currentName = extras.getString("name");
+            currentPoints = extras.getString(Constants.POINTS_STR);
+            if(extras.containsKey(Constants.NAME_STR)){
+                currentName = extras.getString(Constants.NAME_STR);
             }else
                 currentName = "default_name";
         }
@@ -158,11 +157,11 @@ public class GestureSettingActivity extends Activity {
 
     public void editGesture(View view){
         Intent intent = new Intent(this, AddGestureActivity.class);
-        intent.putExtra("source","GestureSettingActivity");
+        intent.putExtra(Constants.SOURCE_STR,"GestureSettingActivity");
         //pass the points
-        intent.putExtra("points",currentPoints);
+        intent.putExtra(Constants.POINTS_STR,currentPoints);
         EditText editText =  (EditText) findViewById(R.id.gesture_name);
-        intent.putExtra("name", String.valueOf(editText.getText()) );
+        intent.putExtra(Constants.NAME_STR, String.valueOf(editText.getText()) );
         //pass the background pic
         AddGestureActivity.setBackgroundPic(currentBackground);
         currentBackground = null;

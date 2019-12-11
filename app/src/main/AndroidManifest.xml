@@ -55,9 +55,6 @@
         <activity
             android:name=".gesture.GestureSettingActivity"
             android:parentActivityName=".gesture.GestureListActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="io.voxhub.accessibility.voicetouch.gesture.GestureListActivity" />
         </activity>
         <activity
             android:name=".gesture.GestureListActivity"

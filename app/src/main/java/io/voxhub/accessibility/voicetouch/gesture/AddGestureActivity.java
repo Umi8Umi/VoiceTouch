@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.voxhub.accessibility.voicetouch.Constants;
 import io.voxhub.accessibility.voicetouch.R;
 
 
@@ -35,6 +36,9 @@ public class AddGestureActivity extends Activity {
     private static Bitmap backgroundPic;
 
     private boolean waitState = true;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +77,16 @@ public class AddGestureActivity extends Activity {
         //Check for touches on our main layout
         fl = (FingerLine) findViewById(R.id.finger_line);
 
+        Bundle extras = null;
+        if(getIntent().getExtras() != null){
+            extras = getIntent().getExtras();
+        }
 
-        Bundle extras = getIntent().getExtras();
-        String source = extras.getString("source");
+
+        String source = null;
+        if(extras != null && extras.containsKey(Constants.SOURCE_STR)){
+            source = extras.getString(Constants.SOURCE_STR);
+        }
 
         ImageView image = (ImageView) findViewById(R.id.background_pic);
         image.setImageBitmap(backgroundPic);
@@ -109,10 +120,12 @@ public class AddGestureActivity extends Activity {
 
 
 
-        if(source.equals("GestureSettingActivity")){
-            String points = extras.getString("points");
+
+        if(source != null && source.equals("GestureSettingActivity")){
+
+            String points = extras.getString(Constants.POINTS_STR);
             fl.points = PointsSerializer.convertStrToPointlist(points);
-            gestureName = extras.getString("name");
+            gestureName = extras.getString(Constants.NAME_STR);
             waitState = false;
             t.start();
             mProgressBar.setVisibility(View.VISIBLE);
@@ -152,11 +165,11 @@ public class AddGestureActivity extends Activity {
     private void saveCurrentGesture(List<Point> points, Bitmap backgroundPic){
         //pass the points back
         Intent intent = new Intent(this, GestureSettingActivity.class);
-        intent.putExtra("source","AddGesture");
+        intent.putExtra(Constants.SOURCE_STR,"AddGesture");
         GestureSettingActivity.setBackgroundImage(backgroundPic);
-        intent.putExtra("points", PointsSerializer.convertPointlistToStr(points));
+        intent.putExtra(Constants.POINTS_STR, PointsSerializer.convertPointlistToStr(points));
         if(gestureName != null){
-            intent.putExtra("name", gestureName);
+            intent.putExtra(Constants.NAME_STR, gestureName);
         }
         startActivity(intent);
     }

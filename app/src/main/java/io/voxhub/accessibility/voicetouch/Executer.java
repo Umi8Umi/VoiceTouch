@@ -1,18 +1,29 @@
 package io.voxhub.accessibility.voicetouch;
+import io.voxhub.accessibility.voicetouch.command.CommandListActivity;
 import io.voxhub.accessibility.voicetouch.database.CommandData;
 import io.voxhub.accessibility.voicetouch.database.VoiceTouchDbHelper;
+import io.voxhub.accessibility.voicetouch.gesture.AddGestureActivity;
+import io.voxhub.accessibility.voicetouch.gesture.GestureListActivity;
 import jp.naist.ahclab.speechkit.logs.MyLog;
 
 
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.gesture.Gesture;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Display;
+import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -154,6 +165,30 @@ public class Executer{
                                                     MyLog.i("SimpleActivity sent background");
                                                 } });
 
+        commandsMap.put("page page", new Command(){
+            public void run() {
+                MyLog.i("SimpleActivity spotted " +
+                        "create gesture");
+
+//                simpleActivity.stopListening();
+
+                bringApplicationToForeground();
+
+                Intent j = new Intent(simpleActivity, GestureListActivity.class);
+                j.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                simpleActivity.startActivity(j);
+
+
+                Intent i = new Intent(simpleActivity, AddGestureActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                simpleActivity.startActivity(i);
+
+                MyLog.i("SimpleActivity sent " +
+                        "create gesture");
+            }
+            public boolean isInstant() {return true;}
+        });
+
         //get all commands and related gestures from db
         List<String> commandList = db.getAllCommandNames();
         for(String command: commandList){
@@ -163,8 +198,6 @@ public class Executer{
             commandsMap.put(callname,        new CustomizedCommand(gestures));
             Log.i("register command",callname);
         }
-
-
 
     }
 
@@ -229,6 +262,10 @@ public class Executer{
             MyLog.i("runOne is about to be entered");
             runOne();
     }
+
+
+
+
         
     abstract class Command implements Runnable {
         public abstract void run();
@@ -296,7 +333,6 @@ public class Executer{
         @Override
         public void run() {
             MyLog.i("SimpleActivity spotted gesture :" + name);
-
             sendAccessibilityEvent("customization", points);
             MyLog.i("SimpleActivity sent gesture:" + name);
             MyLog.i("SimpleActivity sent gesture points:" + points);

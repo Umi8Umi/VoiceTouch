@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import java.util.List;
 
+import io.voxhub.accessibility.voicetouch.Constants;
 import io.voxhub.accessibility.voicetouch.R;
 import io.voxhub.accessibility.voicetouch.database.VoiceTouchDbHelper;
 
@@ -42,8 +43,8 @@ public class GestureListActivity extends Activity {
 
                 Intent intent = new Intent(GestureListActivity.this, GestureSettingActivity.class);
                 //based on item add info to intent
-                intent.putExtra("source","GestureList");
-                intent.putExtra("gesture_name", gestureName);
+                intent.putExtra(Constants.SOURCE_STR,"GestureList");
+                intent.putExtra(Constants.GESTURE_NAME_STR, gestureName);
                 startActivity(intent);
 
             }
@@ -57,7 +58,7 @@ public class GestureListActivity extends Activity {
         // Do something in response to button
         AddGestureActivity.setBackgroundPic(null);
         Intent intent = new Intent(this, AddGestureActivity.class);
-        intent.putExtra("source","GestureList");
+        intent.putExtra(Constants.SOURCE_STR,"GestureList");
         startActivity(intent);
     }
 
