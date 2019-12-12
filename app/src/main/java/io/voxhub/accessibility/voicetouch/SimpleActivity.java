@@ -163,7 +163,7 @@ public class SimpleActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(requestCode == 101){
+        if(requestCode == 101 && grantResults.length > 0){
             boolean granted = (grantResults[0] == PackageManager.PERMISSION_GRANTED);
             if(granted) {
                 init_speechkit(serverInfo);
