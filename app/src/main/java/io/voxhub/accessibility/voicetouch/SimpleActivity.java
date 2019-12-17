@@ -227,7 +227,8 @@ public class SimpleActivity extends Activity {
         makeOverlay();
         progress.setVisibility(View.VISIBLE);
         btn_stop.setVisibility(View.VISIBLE);
-        
+
+
         if (btn_enable.getVisibility() == View.VISIBLE) {
             new AlertDialog.Builder(SimpleActivity.this)
                 .setTitle("Warning")
@@ -263,7 +264,7 @@ public class SimpleActivity extends Activity {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void updateState() {
-        btn_enable.setVisibility(manager.isEnabled() ? View.GONE : View.VISIBLE); 
+        btn_enable.setVisibility(manager.isEnabled() ? View.GONE : View.VISIBLE);
         updateOverlayUI();
     }
 
@@ -335,12 +336,14 @@ public class SimpleActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         MyLog.i("onCreate has been entered");
+
+
         manager = (AccessibilityManager)this.getSystemService(Context.ACCESSIBILITY_SERVICE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dictation);
 
         executer = new Executer(this);
-        executer.constructMap();
+
 
 
         //installed-app-list
@@ -545,6 +548,7 @@ public class SimpleActivity extends Activity {
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onResume() {
+        executer.constructMap();
         make_speechkit();
         updateState();
 

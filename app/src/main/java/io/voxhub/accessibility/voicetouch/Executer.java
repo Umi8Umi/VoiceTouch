@@ -170,10 +170,7 @@ public class Executer{
             public void run() {
                 MyLog.i("SimpleActivity spotted " +
                         "create gesture");
-
-//                simpleActivity.stopListening();
-
-                bringApplicationToForeground();
+                
 
                 Intent j = new Intent(simpleActivity, GestureListActivity.class);
                 j.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -183,6 +180,8 @@ public class Executer{
                 Intent i = new Intent(simpleActivity, AddGestureActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 simpleActivity.startActivity(i);
+
+                bringApplicationToForeground();
 
                 MyLog.i("SimpleActivity sent " +
                         "create gesture");
@@ -196,9 +195,6 @@ public class Executer{
                 MyLog.i("SimpleActivity spotted " +
                         "create command");
 
-//                simpleActivity.stopListening();
-
-                bringApplicationToForeground();
 
                 Intent j = new Intent(simpleActivity, CommandListActivity.class);
                 j.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -208,6 +204,8 @@ public class Executer{
                 Intent i = new Intent(simpleActivity, CommandSettingActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 simpleActivity.startActivity(i);
+
+                bringApplicationToForeground();
 
                 MyLog.i("SimpleActivity sent " +
                         "create command");
