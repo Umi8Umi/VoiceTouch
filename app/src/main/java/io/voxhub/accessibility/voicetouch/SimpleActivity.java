@@ -105,6 +105,7 @@ public class SimpleActivity extends Activity {
     private static ServerInfo serverInfo; 
     private static Recognizer _currentRecognizer;
     private static ThreadAdapter _currentListener;
+    private static int ACTIVITY_COUNT = 0;
 
     void init_speechkit(ServerInfo serverInfo){
         if (_currentRecognizer == null) {
@@ -258,6 +259,7 @@ public class SimpleActivity extends Activity {
         MyLog.i("Setting requestListen to " + requestListen);
         _currentRecognizer.stopRecording();
         makeOverlay();
+
         progress.setVisibility(View.INVISIBLE);
         btn_stop.setVisibility(View.INVISIBLE);
     }
@@ -336,6 +338,8 @@ public class SimpleActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         MyLog.i("onCreate has been entered");
+        super.onCreate(savedInstanceState);
+        ACTIVITY_COUNT += 1;
 
 
         if (!isTaskRoot()) {
@@ -343,14 +347,13 @@ public class SimpleActivity extends Activity {
             if (intent.hasCategory(Intent.CATEGORY_LAUNCHER) && Intent.ACTION_MAIN.equals(intent.getAction())) {
                 Log.w(TAG, "Main Activity is not the root.  Finishing Main Activity instead of launching.");
                 finish();
-
+                return;
             }
         }
 
-        manager = (AccessibilityManager)this.getSystemService(Context.ACCESSIBILITY_SERVICE);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dictation);
 
+        manager = (AccessibilityManager)this.getSystemService(Context.ACCESSIBILITY_SERVICE);
+        setContentView(R.layout.activity_dictation);
         executer = new Executer(this);
 
 
@@ -546,11 +549,15 @@ public class SimpleActivity extends Activity {
         MyLog.i("onDestroy");
        // _currentListener.stop();
        // _currentRecognizer.shutdownThreads();
-        destroy_speechkit();
-        MyLog.i("SimpleActivity stopped listening");
-        if(Overlay.getOverlayExists()) {
-            Overlay.getInstance().hide();  // destroy?
+
+        if(ACTIVITY_COUNT == 1){
+            destroy_speechkit();
+            MyLog.i("On destroy SimpleActivity stopped listening");
+            if(Overlay.getOverlayExists()) {
+                Overlay.getInstance().hide();  // destroy?
+            }
         }
+        ACTIVITY_COUNT = ACTIVITY_COUNT - 1;
         super.onDestroy();
     }
 
