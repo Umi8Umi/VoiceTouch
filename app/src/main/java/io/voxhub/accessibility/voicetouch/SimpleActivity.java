@@ -338,6 +338,15 @@ public class SimpleActivity extends Activity {
         MyLog.i("onCreate has been entered");
 
 
+        if (!isTaskRoot()) {
+            final Intent intent = getIntent();
+            if (intent.hasCategory(Intent.CATEGORY_LAUNCHER) && Intent.ACTION_MAIN.equals(intent.getAction())) {
+                Log.w(TAG, "Main Activity is not the root.  Finishing Main Activity instead of launching.");
+                finish();
+
+            }
+        }
+
         manager = (AccessibilityManager)this.getSystemService(Context.ACCESSIBILITY_SERVICE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dictation);
