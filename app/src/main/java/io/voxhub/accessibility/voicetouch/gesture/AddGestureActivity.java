@@ -110,6 +110,7 @@ public class AddGestureActivity extends Activity {
                             List<Point> list = fl.getPoints();
                             saveCurrentGesture(list, backgroundPic);
                             backgroundPic = null;
+                            finish();
                             return;
                         }
                     }
@@ -172,6 +173,7 @@ public class AddGestureActivity extends Activity {
             intent.putExtra(Constants.NAME_STR, gestureName);
         }
         startActivity(intent);
+
     }
 
 
