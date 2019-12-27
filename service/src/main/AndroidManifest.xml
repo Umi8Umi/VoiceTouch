@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="io.voxhub.accessibility.servicecode" >
+  package="io.voxhub.accessibility.voicetouch.servicecode" >
   <application>
-    <service android:name=".MyAccessibilityService"
+    <service android:name="io.voxhub.accessibility.voicetouch.servicecode.MyAccessibilityService"
         android:enabled="true"
         android:exported="true"
         android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"

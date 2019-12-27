@@ -1,18 +1,30 @@
 package io.voxhub.accessibility.voicetouch;
+import io.voxhub.accessibility.voicetouch.command.CommandListActivity;
+import io.voxhub.accessibility.voicetouch.command.CommandSettingActivity;
+import io.voxhub.accessibility.voicetouch.database.CommandData;
+import io.voxhub.accessibility.voicetouch.database.VoiceTouchDbHelper;
+import io.voxhub.accessibility.voicetouch.gesture.AddGestureActivity;
+import io.voxhub.accessibility.voicetouch.gesture.GestureListActivity;
 import jp.naist.ahclab.speechkit.logs.MyLog;
 
-import android.app.Activity;
+
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.gesture.Gesture;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Display;
+import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
-import android.view.WindowManager;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,10 +37,12 @@ public class Executer{
     private LinkedList<Command> commandList = new LinkedList<Command>();
     private HashMap<String, Command> commandsMap = new HashMap<String, Command>();
     private boolean isRunningOne = false;
+    private VoiceTouchDbHelper db;
     
     public Executer (SimpleActivity s) {
         simpleActivity = s;
         manager = (AccessibilityManager)s.getSystemService(Context.ACCESSIBILITY_SERVICE);
+        db = new VoiceTouchDbHelper(s);
     }
 
     public void sendAccessibilityEvent(String string) {
@@ -39,8 +53,32 @@ public class Executer{
         event.setEnabled(true);
         event.getText().clear();
         event.getText().add(string);
-        event.getText().add(":");
-        //MyLog.i("SimpleActivity event: " + event.toString());
+        event.getText().add(";");
+
+//        MyLog.i("SimpleActivity event: " + event.toString());
+        if(simpleActivity.dispatchPopulateAccessibilityEvent(event)) {
+            MyLog.i("SimpleActivity dispatchPopulateAccessibilityEvent says OK");
+        }
+        else {
+            MyLog.i("SimpleActivity dispatchPopulateAccessibilityEvent says ???");
+        }
+        manager.sendAccessibilityEvent(event);
+        MyLog.i("SimpleActivity sent accessibility event");
+    }
+
+    public void sendAccessibilityEvent(String string, String gesturePoints) {
+        AccessibilityEvent event = AccessibilityEvent.obtain(AccessibilityEvent
+                .TYPE_ANNOUNCEMENT);
+        event.setClassName(getClass().getName());
+        event.setPackageName(simpleActivity.getPackageName());
+        event.setEnabled(true);
+        event.getText().clear();
+        event.getText().add(string);
+        event.getText().add(";");
+        event.getText().add(gesturePoints);
+        event.getText().add(";");
+
+
         if(simpleActivity.dispatchPopulateAccessibilityEvent(event)) {
             MyLog.i("SimpleActivity dispatchPopulateAccessibilityEvent says OK");
         }
@@ -127,6 +165,63 @@ public class Executer{
                                                     bringApplicationToForeground();
                                                     MyLog.i("SimpleActivity sent background");
                                                 } });
+
+        commandsMap.put("create gesture", new Command(){
+            public void run() {
+                MyLog.i("SimpleActivity spotted " +
+                        "create gesture");
+                
+
+                Intent j = new Intent(simpleActivity, GestureListActivity.class);
+                j.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                simpleActivity.startActivity(j);
+
+
+                Intent i = new Intent(simpleActivity, AddGestureActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                simpleActivity.startActivity(i);
+
+                bringApplicationToForeground();
+
+                MyLog.i("SimpleActivity sent " +
+                        "create gesture");
+            }
+            public boolean isInstant() {return true;}
+        });
+
+
+        commandsMap.put("create command", new Command(){
+            public void run() {
+                MyLog.i("SimpleActivity spotted " +
+                        "create command");
+
+
+                Intent j = new Intent(simpleActivity, CommandListActivity.class);
+                j.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                simpleActivity.startActivity(j);
+
+
+                Intent i = new Intent(simpleActivity, CommandSettingActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                simpleActivity.startActivity(i);
+
+                bringApplicationToForeground();
+
+                MyLog.i("SimpleActivity sent " +
+                        "create command");
+            }
+            public boolean isInstant() {return true;}
+        });
+        //get all commands and related gestures from db
+        List<String> commandList = db.getAllCommandNames();
+        for(String command: commandList){
+            CommandData commandData = db.getCommand(command);
+            String callname = commandData.getAlias();
+            String[] gestures = commandData.getGestureArray();
+            commandsMap.put(callname,        new CustomizedCommand(gestures));
+            Log.i("register command",callname);
+        }
+
     }
 
     private void runOne() {
@@ -171,9 +266,18 @@ public class Executer{
                 MyLog.i("found command: " + sb.toString());
                 c = commandsMap.get(sb.toString());
                 if (!c.isInstant()){
-                    commandList.add(c);
-                    MyLog.i("commandList size: " + commandList.size());}
-                else c.run();
+                    if(c.isCombo()){
+                        CustomizedCommand combo = (CustomizedCommand)c;
+                        combo.addAllCommandsToList();
+                    }else {
+                        commandList.add(c);
+                    }
+                    MyLog.i("commandList size: " + commandList.size());
+                } else{
+                    c.run();
+                }
+
+
                 sb.delete(0,sb.length());
             }
         }
@@ -181,10 +285,15 @@ public class Executer{
             MyLog.i("runOne is about to be entered");
             runOne();
     }
+
+
+
+
         
     abstract class Command implements Runnable {
         public abstract void run();
         public boolean isInstant() {return false;}
+        public boolean isCombo() {return false;}
     }
 
     class AccessibilityCommand extends Command {
@@ -198,6 +307,58 @@ public class Executer{
             MyLog.i("SimpleActivity spotted " + action);
             sendAccessibilityEvent(action);
             MyLog.i("SimpleActivity sent " + action);
+        }
+    }
+
+
+    class CustomizedCommand extends Command {
+        private List<SingleGestureCommand> list;
+
+        CustomizedCommand (String[] gestureList) {
+            this.list = new ArrayList<SingleGestureCommand>();
+            for(String gesture: gestureList){
+                String gesturePoints = db.getGesturePoints(gesture);
+                this.list.add(new SingleGestureCommand(gesture, gesturePoints));
+            }
+
+        }
+
+
+        public void addAllCommandsToList() {
+            MyLog.i("Customized command got called");
+            for(SingleGestureCommand command: list){
+                commandList.add(command);
+            }
+        }
+
+        @Override
+        public void run() {
+            MyLog.i("This is combo command, this command should not be ran");
+        }
+
+        @Override
+        public boolean isCombo() {
+            return true;
+        }
+    }
+
+
+    class SingleGestureCommand extends Command {
+
+        private String name;
+        private String points;
+
+        public SingleGestureCommand(String n, String p){
+            name = n;
+            points = p;
+        }
+
+        @Override
+        public void run() {
+            MyLog.i("SimpleActivity spotted gesture :" + name);
+            sendAccessibilityEvent("customization", points);
+            MyLog.i("SimpleActivity sent gesture:" + name);
+            MyLog.i("SimpleActivity sent gesture points:" + points);
         }
     }
 }

@@ -2,34 +2,48 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "20.0.0"
 
     defaultConfig {
         applicationId "io.voxhub.accessibility.voicetouch"
-        minSdkVersion 15
+        minSdkVersion 24
         targetSdkVersion 28
-        versionCode 1
-        versionName "0.1.0"
+        versionCode 4
+        versionName "0.1.3"
     }
     buildTypes {
         release {
-            minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+    }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':speechkit')
-    compile project(':service')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':speechkit')
+    implementation project(':service')
     //compile 'com.android.support:preference-v7:28.0.0'
 //    compile 'com.android.support:preference-v7:23.0.1'
 //    compile "com.android.support.constraint:constraint-layout:1.0.2"
-    compile 'com.android.support:support-v4:+'
-    compile 'org.apache.httpcomponents:httpcore:4.4.2'
-    compile 'org.apache.httpcomponents:httpclient:4.5'
+    implementation 'com.android.support:support-v4:+'
+    implementation 'org.apache.httpcomponents:httpcore:4.4.2'
+    //noinspection DuplicatePlatformClasses
+    implementation 'org.apache.httpcomponents:httpclient:4.5'
+    implementation 'com.android.support:appcompat-v7:+'
+
+
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support:design:28.0.0'
 }

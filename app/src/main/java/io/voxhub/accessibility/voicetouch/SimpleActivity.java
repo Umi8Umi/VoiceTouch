@@ -1,4 +1,6 @@
 package io.voxhub.accessibility.voicetouch;
+import io.voxhub.accessibility.voicetouch.command.CommandListActivity;
+import io.voxhub.accessibility.voicetouch.gesture.GestureListActivity;
 import jp.naist.ahclab.speechkit.logs.MyLog;
 
 import android.app.Activity;
@@ -7,6 +9,7 @@ import android.app.AlertDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.accessibility.AccessibilityManager;
 import android.view.animation.Animation;
@@ -87,7 +90,9 @@ public class SimpleActivity extends Activity {
     private Button btn_stop;
     private Button btn_enable;
     private Button btn_overlay;
-    private Button btn_about;
+//    private Button btn_about;
+    private Button btn_gesture;
+    private Button btn_command;
    // private Button btn_help;
     private ImageButton btn_help;
     private ProgressBar progress;
@@ -100,6 +105,7 @@ public class SimpleActivity extends Activity {
     private static ServerInfo serverInfo; 
     private static Recognizer _currentRecognizer;
     private static ThreadAdapter _currentListener;
+    private static int ACTIVITY_COUNT = 0;
 
     void init_speechkit(ServerInfo serverInfo){
         if (_currentRecognizer == null) {
@@ -115,7 +121,9 @@ public class SimpleActivity extends Activity {
     }
 
     void make_speechkit() {
-        if (!makeServerInfo()) return;
+        if (!makeServerInfo() && _currentRecognizer != null){
+            return;
+        }
         
         destroy_speechkit();
         requestMicPermissions();
@@ -156,7 +164,7 @@ public class SimpleActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(requestCode == 101){
+        if(requestCode == 101 && grantResults.length > 0){
             boolean granted = (grantResults[0] == PackageManager.PERMISSION_GRANTED);
             if(granted) {
                 init_speechkit(serverInfo);
@@ -173,7 +181,7 @@ public class SimpleActivity extends Activity {
     public boolean makeServerInfo() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         String newserver = pref.getString("server", "silvius-server.voxhub.io");
-        int newport = Integer.parseInt(pref.getString("port", "8022"));
+        int newport = Integer.parseInt(pref.getString("port", "8023"));
         if (serverInfo == null 
             || !serverInfo.getAddr().equals(newserver)
             || serverInfo.getPort() != newport) {
@@ -204,6 +212,7 @@ public class SimpleActivity extends Activity {
         makeOverlay(pref.getBoolean("overlay_enabled", true));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void updateOverlayUI() {
         makeOverlay();
         btn_overlay.setVisibility(Settings.canDrawOverlays(this) ? View.GONE : View.VISIBLE);
@@ -219,7 +228,8 @@ public class SimpleActivity extends Activity {
         makeOverlay();
         progress.setVisibility(View.VISIBLE);
         btn_stop.setVisibility(View.VISIBLE);
-        
+
+
         if (btn_enable.getVisibility() == View.VISIBLE) {
             new AlertDialog.Builder(SimpleActivity.this)
                 .setTitle("Warning")
@@ -249,12 +259,14 @@ public class SimpleActivity extends Activity {
         MyLog.i("Setting requestListen to " + requestListen);
         _currentRecognizer.stopRecording();
         makeOverlay();
+
         progress.setVisibility(View.INVISIBLE);
         btn_stop.setVisibility(View.INVISIBLE);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void updateState() {
-        btn_enable.setVisibility(manager.isEnabled() ? View.GONE : View.VISIBLE); 
+        btn_enable.setVisibility(manager.isEnabled() ? View.GONE : View.VISIBLE);
         updateOverlayUI();
     }
 
@@ -322,15 +334,29 @@ public class SimpleActivity extends Activity {
         return map;
     }*/
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         MyLog.i("onCreate has been entered");
-        manager = (AccessibilityManager)this.getSystemService(Context.ACCESSIBILITY_SERVICE);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dictation);
+        ACTIVITY_COUNT += 1;
 
+
+        if (!isTaskRoot()) {
+            final Intent intent = getIntent();
+            if (intent.hasCategory(Intent.CATEGORY_LAUNCHER) && Intent.ACTION_MAIN.equals(intent.getAction())) {
+                Log.w(TAG, "Main Activity is not the root.  Finishing Main Activity instead of launching.");
+                finish();
+                return;
+            }
+        }
+
+
+        manager = (AccessibilityManager)this.getSystemService(Context.ACCESSIBILITY_SERVICE);
+        setContentView(R.layout.activity_dictation);
         executer = new Executer(this);
-        executer.constructMap();
+
+
 
         //installed-app-list
         //mContext = getApplicationContext();
@@ -350,15 +376,17 @@ public class SimpleActivity extends Activity {
         btn_stop = (Button) this.findViewById(R.id.btn_stop);
         btn_enable = (Button) this.findViewById(R.id.btn_enable);
         btn_overlay = (Button) this.findViewById(R.id.btn_overlay); 
-        btn_about = (Button) this.findViewById(R.id.btn_about);
+//        btn_about = (Button) this.findViewById(R.id.btn_about);
+        btn_gesture = (Button) this.findViewById(R.id.btn_gesture);
+        btn_command = (Button) this.findViewById(R.id.btn_command);
         btn_help = (ImageButton) this.findViewById(R.id.btn_help);
         progress = (ProgressBar)findViewById(R.id.progress_listening);
         ed_result = (EditText)findViewById(R.id.ed_result);
-        
+
+
         if(_currentRecognizer == null || makeServerInfo()) {
             make_speechkit();
-        }
-        else {
+        } else {
             init_speechkit(serverInfo);
             // inherit old audio thread
             if(_currentRecognizer.isRecording()) {
@@ -434,18 +462,36 @@ public class SimpleActivity extends Activity {
             }
         });
 
-        btn_about.setOnClickListener(new View.OnClickListener() {
+//        btn_about.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) { // Open about page
+//                Intent intent = new Intent(SimpleActivity.this, AboutActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+
+        btn_gesture.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { // Open about page
-                Intent intent = new Intent(SimpleActivity.this, AboutActivity.class);
+            public void onClick(View v) { // Open gesture page
+                Intent intent = new Intent(SimpleActivity.this, GestureListActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_command.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { // Open command page
+                Intent intent = new Intent(SimpleActivity.this, CommandListActivity.class);
                 startActivity(intent);
             }
         });
 
         btn_help.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { // Open about page
-                Intent intent = new Intent(SimpleActivity.this, HelpActivity.class);
+            public void onClick(View v) { // Open help page
+//                Intent intent = new Intent(SimpleActivity.this, HelpActivity.class);
+//                startActivity(intent);
+                Intent intent = new Intent(SimpleActivity.this, AboutActivity.class);
                 startActivity(intent);
             }
         });
@@ -472,6 +518,7 @@ public class SimpleActivity extends Activity {
         updateState();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         MyLog.i("requestCode: " + requestCode + " resultCode: " + resultCode + " data: " + data);
@@ -502,16 +549,22 @@ public class SimpleActivity extends Activity {
         MyLog.i("onDestroy");
        // _currentListener.stop();
        // _currentRecognizer.shutdownThreads();
-        destroy_speechkit();
-        MyLog.i("SimpleActivity stopped listening");
-        if(Overlay.getOverlayExists()) {
-            Overlay.getInstance().hide();  // destroy?
+
+        if(ACTIVITY_COUNT == 1){
+            destroy_speechkit();
+            MyLog.i("On destroy SimpleActivity stopped listening");
+            if(Overlay.getOverlayExists()) {
+                Overlay.getInstance().hide();  // destroy?
+            }
         }
+        ACTIVITY_COUNT = ACTIVITY_COUNT - 1;
         super.onDestroy();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onResume() {
+        executer.constructMap();
         make_speechkit();
         updateState();
 
@@ -620,6 +673,7 @@ public class SimpleActivity extends Activity {
                 MyLog.i("SimpleActivity restarted listening.");
             }
         }
+
     }
 
 }

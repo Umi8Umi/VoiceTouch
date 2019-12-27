@@ -14,7 +14,7 @@ public class ServerInfo {
     private String addr="silvius-server.voxhub.io";
     private String app_speech="/dev/duplex-speech-api/ws/speech";
     private String app_status="/dev/duplex-speech-api/ws/status";
-    private int port=8022;
+    private int port=8023;
 
     List<BasicNameValuePair> extraHeaders = Arrays.asList(
             new BasicNameValuePair("Cookie", "session=abcd"),

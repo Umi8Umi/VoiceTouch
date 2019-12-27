@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/gesture_display">
+
+
+    <FrameLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        >
+        <FrameLayout
+
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+            <ImageView
+                android:id="@+id/background_pic_on_display"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+            </ImageView>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <io.voxhub.accessibility.voicetouch.gesture.FingerLine
+                android:id="@+id/gesture_on_display"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/semi_black"
+                android:onClick="stopViewGesture"/>
+
+        </FrameLayout>
+
+
+
+    </FrameLayout>
+
+
+
+
+</LinearLayout>

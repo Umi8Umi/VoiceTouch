@@ -5,7 +5,7 @@
     android:accessibilityFeedbackType="feedbackSpoken"
     android:notificationTimeout="100"
     android:canRetrieveWindowContent="true"
-    android:settingsActivity="io.voxhub.accessibility.servicecode.MyAccessibilityService"
+    android:settingsActivity="io.voxhub.accessibility.voicetouch.servicecode.MyAccessibilityService"
     android:canPerformGestures="true"
 />
 <!-- From: file:/home/serena/kaldi2/service/src/main/res/xml/accessibility_service_config.xml -->

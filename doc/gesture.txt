@@ -1,0 +1,38 @@
+Name: Kang Sun
+
+For the project ‘Voice Touch’, the following are my work:
+	1.	Migrated the whole project from gradle 2.1 to gradle 5.4
+		
+		The version of gradle plugin is updated from 0.14.0 to 3.5.1 in file build.gradle. The version of gradle is updated from 2.1 to 5.4 in file gradle/wrapper/gradle-wrapper.propertie. Related changes about migration are also made in files app/build.gradle, service/build.gradle and speechkit/build.gradle. Also, the minimum SDK version is updated to 24, and the minimum android version is 7, because some functions on the app require such API level.
+
+
+	2.	Implemented the ‘Gesture’ module. The ‘Gesture’ module mainly contains three parts:
+		
+		a.	GestureListActivity. On this activity, all available gestures are shown in a list with their names displayed. For each gesture, there is a ‘Delete’ button for the deletion operation. On this part, there is also a button for creating new gesture from scratch. It will direct user to ‘AddGestureActivity’.
+
+		b.	AddGestureActivity. On this activity, user can draw a gesture with their finger. Once the finger is released from the screen, there begins a 3-second countdown. If the countdown goes to 0, the gesture drawn by the user is recorded and the app goes to ‘GestureSetttingActivity’. If the countdown is interrupted by finger touch, all previous gesture will be deleted and the new gesture will be created by following user’s finger.
+
+		c.	GestureSetttingActivity. This is the detail page of each gesture. On this activity, the gesture that is created by user is displayed in a thumbnail. When the thumbnail is clicked, the gesture will be displayed in full screen mode. Also, there is button ‘Edit Gesture’ which can direct user to ‘AddGestureActivity’ to redraw the gesture. There is a ‘Save Gesture’ button which can save details of the gesture to database. There are two other buttons on this page, ‘Upload Img’ and ‘Clear Img’. They are related to the background image of the gesture. The idea comes from the concern that user may want to view the exact look of the gesture on other pages. ‘Upload Img’ allows user to upload a picture from gallery or other sources and this picture is set as the background image of the gesture. ‘Clear Img’ button allows user to clear the background picture.
+
+
+	3.	Implemented the ‘Command’ module. The ‘Command’ module contains two parts:
+		
+		a.	CommandListActivity. On this activity, all available commands are shown in a list with their names displayed. For each command, there is a ‘Delete’ button for the deletion operation. On this part, there is also a button for creating new command from scratch. It will direct user to ‘CommandSettingActivity’.
+
+		b.	CommandSettingActivity. On this activity, user can input the name and the spoken words of the command. The difference between name and spoken words is that spoken words is for user to speak and it triggers the command and name is the unique identifier for the command on this app. On this activity, user can also create a list of gestures by picking gestures from existing gesture list. As a result, when the call name of this command is called, the gestures that this command has will be executed in sequence.
+
+
+	4.	Implemented a local SQLite database for app ‘VoiceTouch’
+
+		For Android devices, they can have their own local database which is a lightweight database called SQLite. ‘Voice Touch’ has one too. The class ‘VoiceTouchDBHelper’ does the work of creating database, upgrading database, querying data, inserting data and updating data. The details of the database are declared in the class ‘VoiceTouchDBHelper’. There are two tables in this database, ‘Gesture’ and ‘Command’. The table ‘Gesture’ contains three fields ‘name’, ‘points’ and ‘background’. The field ‘name’ represents the name of gesture, the field ‘points’ represents all points of which the gesture is made up and the field ‘background’ represents the background image of the gesture. The table ‘Command’ contains three fields ‘name’, ‘callname’ and ‘gestures’. The field ‘name’ represents the name of the command while the field ‘callname’ represents the spoken words to trigger the command. The field ‘gestures’ is a list of gestures name which the command contains.
+
+
+	5.	Added voice accessibility support for all commands in the ‘command’ module.
+
+		To support the feature that each command is executed when it is called by user, some work is done in the voice accessibility module to support this. 
+
+		On the ‘app’ app side, all commands are registered to ‘commandsMap’. Because every command can contain multiple gestures and each gesture represents one movement, so when the command is called, all gestures in this command are added to ‘commandList’ in sequence so it can be executed in sequence later. When each gesture is ran, the points of gesture are queried from database and passed to AccessbilityManager so the manager can wrap it as an event and send it to ‘service’ app.
+
+		On the ‘service’ app side, the service is stateless. Whenever it receives an event, it extracts the name of the gesture from text of event to see whether it matches certain types. If it does, then certain movement will be executed. If it does not and it is our customized gesture, the gesture points will be extracted from the text of the event so the movement of customized gesture can be executed. The splitter for the text of the event is update from “:” to “;”. To add a customized gesture event, the text of event should look like “[name];[points];”.
+
+	
